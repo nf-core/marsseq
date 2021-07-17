@@ -11,7 +11,7 @@ WorkflowMarsseq.initialise(params, log)
 
 // TODO nf-core: Add all file path parameters for the pipeline to the list below
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config, params.fasta ]
+def checkPathParamList = [ params.input, params.multiqc_config, params.fasta, params.gtf ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
@@ -57,6 +57,8 @@ multiqc_options.args += params.multiqc_title ? Utils.joinModuleArgs(["--title \"
 //
 // MODULE: Installed directly from nf-core/modules
 //
+include { PREPARE_PIPELINE } from '../modules/local/prepare_pipeline' addParams( options: [:] )
+
 include { FASTQC  } from '../modules/nf-core/modules/fastqc/main'  addParams( options: modules['fastqc'] )
 include { MULTIQC } from '../modules/nf-core/modules/multiqc/main' addParams( options: multiqc_options   )
 
@@ -72,6 +74,9 @@ def multiqc_report = []
 workflow MARSSEQ {
 
     ch_software_versions = Channel.empty()
+    ch_fasta = Channel.from(params.fasta)
+    ch_gtf = Channel.from(params.gtf)
+    ch_ercc_regions = Channel.from("$projectDir/data/ercc-regions.tsv")
 
     //
     // SUBWORKFLOW: Read in samplesheet, validate and stage input files
@@ -81,6 +86,12 @@ workflow MARSSEQ {
     )
     .map { meta, reads, metadata -> [ meta.id, reads, metadata ] }
     .set { ch_fastq }
+
+    PREPARE_PIPELINE(
+        ch_fastq,
+        ch_gtf,
+        ch_ercc_regions
+    )
 
     //
     // MODULE: Run FastQC
