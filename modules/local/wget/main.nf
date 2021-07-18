@@ -9,7 +9,7 @@ process WGET {
     label 'process_low'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:"references/${params.genome}", meta:[:], publish_by_meta:[]) }
+        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), meta:[:], publish_by_meta:[]) }
 
     conda (params.enable_conda ? "bioconda::gnu-wget=1.18" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
@@ -27,18 +27,8 @@ process WGET {
 
     script:
     def software = getSoftwareName(task.process)
-    def original_filename = url.split("/")[-1]
     """
-    wget $options.args $url -O $original_filename
-
-    case $original_filename in
-    *.gz )  
-            gunzip -c $original_filename > $filename
-        ;;
-    * )
-            echo "Extension not supported"
-        ;;
-    esac
+    wget $options.args $url -O $filename
 
     echo \$(wget -V 2>&1) | grep "GNU Wget" | cut -d" " -f3 > ${software}.version.txt
     """
