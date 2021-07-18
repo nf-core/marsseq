@@ -91,4 +91,19 @@ class WorkflowMain {
         }
         return val
     }
+
+    //
+    // Get attribute from genome config file e.g. fasta
+    //
+    static Tuple getGenomeAttributes(params, attribute) {
+        def filename = ''
+        def url = ''
+        if (params.genomes && params.genome && params.genomes.containsKey(params.genome)) {
+            if (params.genomes[ params.genome ].containsKey(attribute)) {
+                filename = params.genomes[ params.genome ][ attribute ].split("/")[-1]
+                url = params.genomes[ params.genome ][ "${attribute}_url" ]
+            }
+        }
+        return new Tuple(filename, url)
+    }
 }
