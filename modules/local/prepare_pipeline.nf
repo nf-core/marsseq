@@ -45,5 +45,7 @@ process PREPARE_PIPELINE {
         --gtf $gtf \\
         --output .
     cat ${ercc} >> gene_intervals.txt
+
+    validate_data.py --input .
     """
 }
