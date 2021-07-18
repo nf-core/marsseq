@@ -1,8 +1,7 @@
 // Import generic module functions
-include { initOptions; saveFiles; getSoftwareName } from './functions'
+include { saveFiles } from './functions'
 
 params.options = [:]
-options        = initOptions(params.options)
 
 /*
  * Preparation process before executing pipeline.
@@ -28,12 +27,12 @@ process PREPARE_PIPELINE {
     }
 
     input:
-        tuple val(meta), path(data), path(metadata)
-        path gtf
-        path ercc
+    tuple val(meta), path(data), path(metadata)
+    path gtf
+    path ercc
     
     output:
-        path "*.txt", emit: txts
+    path "*.txt", emit: txts
 
     script:
     """
