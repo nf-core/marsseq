@@ -24,7 +24,7 @@ process CREATE_ERCC_FASTA {
     path spikeins
     
     output:
-    path "ercc.fasta", emit: ercc
+    path "ercc.fasta", emit: fasta
 
     script:
     """
