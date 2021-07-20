@@ -1,5 +1,5 @@
 // Import generic module functions
-include { saveFiles } from './functions'
+include { saveFiles; getSoftwareName } from './functions'
 
 params.options = [:]
 
@@ -7,7 +7,7 @@ params.options = [:]
  * Construct spike-ins fasta (ERCC.fasta)
  */
 process MERGE_FASTA {
-    tag "merged.fasta"
+    tag "${params.genome}.fasta"
     label 'process_tiny'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -25,10 +25,10 @@ process MERGE_FASTA {
     path ercc_fasta
     
     output:
-    path "merged.fasta", emit: fasta
+    path "${params.genome}.fasta", emit: fasta
 
     script:
     """
-    cat $fasta $ercc_fasta > merged.fasta
+    cat $fasta $ercc_fasta > ${params.genome}.fasta
     """
 }
