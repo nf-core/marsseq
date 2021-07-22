@@ -42,7 +42,7 @@ workflow NFCORE_MARSSEQ {
     if (params.build_references) {
 
         include { BUILD_REFERENCES } from './workflows/build_references'
-        BUILD_REFERENCES()
+        BUILD_REFERENCES ()
 
     } else {
 
