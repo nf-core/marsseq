@@ -17,12 +17,12 @@ workflow INPUT_CHECK {
         .set { reads }
 
     emit:
-    reads // channel: [ val(meta), [reads] [design_files] ]
+    reads // channel: [ val(batch), [reads] ]
 }
 
 def create_fastq_channels(LinkedHashMap row) {
     def meta = [:]
-    meta.id           = row.batch
+    meta.id  = row.batch
 
     if (!file(row.fastq_1).exists()) {
         exit 1, "ERROR: Please check input samplesheet -> Read 1 FastQ file does not exist!\n${row.fastq_1}"
@@ -43,5 +43,9 @@ def create_fastq_channels(LinkedHashMap row) {
         exit 1, "ERROR: well_cells file does not exist!"
     }
 
-    return [ meta, [ file(row.fastq_1), file(row.fastq_2) ], [ file(row.amp_batches), file(row.seq_batches), file(row.well_cells) ] ]
+    meta.amp_batches = file(row.amp_batches)
+    meta.seq_batches = file(row.seq_batches)
+    meta.well_cells = file(row.well_cells)
+
+    return [ meta, [ file(row.fastq_1), file(row.fastq_2) ] ]
 }
