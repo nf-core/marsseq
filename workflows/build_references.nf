@@ -31,12 +31,12 @@ include { STAR_GENOMEGENERATE    } from '../modules/local/star/genomegenerate/ma
 workflow BUILD_REFERENCES {
 
     // download references
-    DOWNLOAD_FASTA( WorkflowMain.getGenomeAttributes(params, 'fasta') )
-    DOWNLOAD_GTF( WorkflowMain.getGenomeAttributes(params, 'gtf') )
-    
+    ch_fetched_fasta = DOWNLOAD_FASTA( [ "${params.fasta.split('/')[-1]}.gz", WorkflowMain.getGenomeAttribute(params, 'fasta_url') ] ).file
+    ch_fetched_gtf   = DOWNLOAD_GTF( [ "${params.gtf.split('/')[-1]}.gz", WorkflowMain.getGenomeAttribute(params, 'gtf_url') ] ).file
+
     // uncompress
-    ch_fasta = GUNZIP_FASTA ( DOWNLOAD_FASTA.out.output_file ).gunzip
-    ch_gtf   = GUNZIP_GTF ( DOWNLOAD_GTF.out.output_file ).gunzip
+    ch_fasta = GUNZIP_FASTA ( ch_fetched_fasta ).gunzip
+    ch_gtf = GUNZIP_GTF ( ch_fetched_gtf ).gunzip
     
     // merge ERCC and reference genome
     ch_ercc_fasta = CREATE_ERCC_FASTA( Channel.from("$projectDir/data/spike-seq.txt") ).fasta

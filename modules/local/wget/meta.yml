@@ -20,11 +20,11 @@ input:
         Groovy Map containing sample information
         e.g. [ id:'test', single_end:false ]
   - filename:
-      type: string
-      description: filename
+      type: sting
+      description: Custom filename downloaded from the url.
   - url:
       type: string
-      description: URL link of the desired file
+      description: URL link of the desired file.
 
 ## TODO nf-core: Add a description of all of the variables used as output
 output:
@@ -37,7 +37,7 @@ output:
       type: file
       description: File containing software version
       pattern: "*.{version.txt}"
-  - output_file:
+  - file:
       type: file
       description: Downloaded file
 

@@ -22,8 +22,8 @@ process WGET {
     tuple val(filename), val(url)
 
     output:
-    path "*.version.txt"    , emit: version
-    path "${filename}"      , emit: output_file
+    path "*.version.txt", emit: version
+    path "${filename}"  , emit: file
 
     script:
     def software = getSoftwareName(task.process)
