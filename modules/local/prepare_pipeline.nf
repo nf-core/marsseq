@@ -27,7 +27,7 @@ process PREPARE_PIPELINE {
     }
 
     input:
-    tuple val(meta), path(data), path(metadata)
+    tuple val(meta), path(reads), path(design_files)
     path gtf
     path ercc
     
@@ -38,9 +38,9 @@ process PREPARE_PIPELINE {
     """
     prepare_pipeline.py \\
         --batch $meta \\
-        --amp_batches ${metadata[0]} \\
-        --seq_batches ${metadata[1]} \\
-        --well_cells ${metadata[2]} \\
+        --amp_batches ${design_files[0]} \\
+        --seq_batches ${design_files[1]} \\
+        --well_cells ${design_files[2]} \\
         --gtf $gtf \\
         --output .
     cat ${ercc} >> gene_intervals.txt

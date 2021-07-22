@@ -17,7 +17,7 @@ workflow INPUT_CHECK {
         .set { reads }
 
     emit:
-    reads // channel: [ val(meta), [reads] [metadata] ]
+    reads // channel: [ val(meta), [reads] [design_files] ]
 }
 
 def create_fastq_channels(LinkedHashMap row) {
