@@ -30,7 +30,7 @@ process PREPARE_PIPELINE {
     tuple val(meta), path(reads)
     
     output:
-    path "*.txt", emit: txts
+    tuple val(meta), path("*.txt"), emit: txts
 
     script:
     def ch_gtf          = file(params.gtf, checkIfExists: true)

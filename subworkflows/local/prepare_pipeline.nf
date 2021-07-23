@@ -11,14 +11,17 @@ include { FASTP_SPLIT              } from '../../modules/local/fastp/split/main'
 
 workflow PREPARE_PIPELINE {
     take:
-    batches
+    batches // channel: [ val(meta), [ reads ] ]
 
     main:
 
+    // convert XLS metadata into txt format
     INIT ( batches )
 
+    // split fastq reads by predefined number of reads per fastq file
     FASTP_SPLIT ( batches )
 
     emit:
-    FASTP_SPLIT.out.reads
+    data        = INIT.out.txts          // channel: [ val(meta), path: *.txts ]
+    fastp_reads = FASTP_SPLIT.out.reads  // channel: [ val(meta), path: *.fastq.gz ]
 }

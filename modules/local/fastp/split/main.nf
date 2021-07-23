@@ -22,9 +22,9 @@ process FASTP_SPLIT {
     tuple val(meta), path(reads)
 
     output:
-    path 'raw_reads/'   , emit: reads
-    path '*.log'        , emit: log
-    path '*.version.txt', emit: version
+    tuple val(meta), path('raw_reads/'), emit: reads
+    path '*.log'                       , emit: log
+    path '*.version.txt'               , emit: version
 
     script:
     def software = getSoftwareName(task.process)
