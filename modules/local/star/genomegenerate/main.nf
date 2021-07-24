@@ -38,6 +38,7 @@ process STAR_GENOMEGENERATE {
         --genomeFastaFiles $fasta \\
         --sjdbGTFfile $gtf \\
         --runThreadN $task.cpus \\
+        --sjdbOverhang ${params.read_length} - 1 \\
         $memory \\
         $options.args
 
