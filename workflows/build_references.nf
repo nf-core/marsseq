@@ -17,8 +17,8 @@ include { WGET as DOWNLOAD_FASTA } from '../modules/local/wget/main'            
 include { WGET as DOWNLOAD_GTF   } from '../modules/local/wget/main'                    addParams( options: modules['wget'] )
 include { GUNZIP as GUNZIP_FASTA } from '../modules/nf-core/modules/gunzip/main'        addParams( options: modules['gunzip'] )
 include { GUNZIP as GUNZIP_GTF   } from '../modules/nf-core/modules/gunzip/main'        addParams( options: modules['gunzip'] )
-include { CREATE_ERCC_FASTA      } from '../modules/local/create_ercc_fasta'            addParams( options: modules['create_ercc_fasta'] )
-include { MERGE_FASTA            } from '../modules/local/merge_fasta'                  addParams( options: modules['merge_fasta'] )
+include { CREATE_ERCC_FASTA      } from '../modules/local/prepare/ercc/main'            addParams( options: modules['create_ercc_fasta'] )
+include { MERGE_FASTA            } from '../modules/local/cat/fasta/main'               addParams( options: modules['merge_fasta'] )
 include { BOWTIE2_BUILD          } from '../modules/nf-core/modules/bowtie2/build/main' addParams( options: modules['bowtie2_index'] )
 include { STAR_GENOMEGENERATE    } from '../modules/local/star/genomegenerate/main'     addParams( options: modules['star_index'] )
 
