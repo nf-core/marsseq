@@ -22,9 +22,9 @@ process FASTP_SPLIT {
     tuple val(meta), path(reads)
 
     output:
-    tuple val(meta), path('raw_reads/'), emit: reads
-    path '*.log'                       , emit: log
-    path '*.version.txt'               , emit: version
+    tuple val(meta), path('raw_reads/*fastq.gz'), emit: reads
+    path 'raw_reads/*.log'                      , emit: log
+    path '*.version.txt'                        , emit: version
 
     script:
     def software = getSoftwareName(task.process)
@@ -42,7 +42,7 @@ process FASTP_SPLIT {
         --disable_adapter_trimming \\
         --disable_trim_poly_g \\
         $options.args \\
-        2> ${meta.id}.fastp.log
+        2> raw_reads/${meta.id}.fastp.log
 
     echo \$(fastp --version 2>&1) | sed -e "s/fastp //g" > ${software}.version.txt
     """
