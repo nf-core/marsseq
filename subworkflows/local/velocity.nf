@@ -18,7 +18,11 @@ workflow VELOCITY {
     main:
 
     // convert fastq files into 10X format
-    VELOCITY_CONVERT ( fastp_reads )
+    fastp_reads
+        .map { meta, reads -> [ meta, reads.first().Parent ] }
+        .set { ch_fastp_folder }
+
+    VELOCITY_CONVERT ( ch_fastp_folder )
 
     // build whitelist.txt
     VELOCITY_WHITELIST ( fastp_reads )
@@ -28,5 +32,8 @@ workflow VELOCITY {
     
     // alignment using StarSolo
     VELOCITY_STARSOLO ( VELOCITY_TRIM.out.reads, VELOCITY_WHITELIST.out.whitelist )
+
+    emit:
+    star_version = VELOCITY_STARSOLO.out.version
 
 }
