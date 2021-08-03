@@ -5,9 +5,9 @@
 def modules = params.modules.clone()
 params.options = [:]
 
-include { BOWTIE2_ALIGN   } from '../../modules/local/bowtie2/align/main' addParams( options: [:] )
-include { QC_ALIGNED      } from '../../modules/local/qc/align/main'      addParams( options: [:] )
-include { TRIM_READ       } from '../../modules/local/cut/sam/main'       addParams( options: [:] )
+include { BOWTIE2_ALIGN   } from '../../modules/local/bowtie2/align/main' addParams( options: modules['bowtie2_align'] )
+include { QC_ALIGNED      } from '../../modules/local/qc/align/main'      addParams( options: modules['qc_aligned'] )
+include { TRIM_READ       } from '../../modules/local/cut/sam/main'       addParams( options: modules['trim_reads'] )
 
 
 workflow ALIGN_READS {
