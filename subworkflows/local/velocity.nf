@@ -6,10 +6,10 @@
 def modules = params.modules.clone()
 params.options = [:]
 
-include { VELOCITY_CONVERT                } from '../../modules/local/velocity_convert'     addParams( options: [:] )
-include { VELOCITY_WHITELIST              } from '../../modules/local/velocity_whitelist'   addParams( options: [:] )
-include { CUTADAPT as VELOCITY_TRIM       } from '../../modules/local/cutadapt/main'        addParams( options: modules['cutadapt'] )
-include { STAR_ALIGN as VELOCITY_STARSOLO } from '../../modules/local/star/align/main'      addParams( options: modules['star_align'] )
+include { VELOCITY_CONVERT                } from '../../modules/local/velocity/convert/main'    addParams( options: [:] )
+include { VELOCITY_WHITELIST              } from '../../modules/local/velocity/whitelist/main'  addParams( options: [:] )
+include { CUTADAPT as VELOCITY_TRIM       } from '../../modules/local/cutadapt/main'            addParams( options: modules['cutadapt'] )
+include { STAR_ALIGN as VELOCITY_STARSOLO } from '../../modules/local/star/align/main'          addParams( options: modules['star_align'] )
 
 workflow VELOCITY {
     take:
