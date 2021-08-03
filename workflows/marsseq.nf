@@ -134,7 +134,10 @@ workflow MARSSEQ {
 
     QC_REPORT ( ch_qcs )
 
-    // VELOCITY ( PREPARE_PIPELINE.out.fastp_reads )
+    //
+    // MODULE: Velocity
+    //
+    VELOCITY ( PREPARE_PIPELINE.out.fastp_reads )
 
     //
     // MODULE: Run FastQC
@@ -146,6 +149,7 @@ workflow MARSSEQ {
         .mix(PREPARE_PIPELINE.out.fastp_version.ifEmpty(null))
         .mix(FASTQC.out.version.first().ifEmpty(null))
         .mix(ALIGN_READS.out.bowtie2_version.ifEmpty(null))
+        .mix(VELOCITY.out.star_version.ifEmpty(null))
 
     //
     // MODULE: Pipeline reporting
