@@ -75,7 +75,7 @@ def prepare_batch_metadata(
             seq.iloc[0]["R1_design"],
             "",
             amp["R2_design"].unique()[0],
-            seq["Genome_assembly"],
+            seq.iloc[0]["Genome_assembly"]
         ],
         index=[
             "Seq_batch_ID",
@@ -84,7 +84,7 @@ def prepare_batch_metadata(
             "R1_design",
             "I5_design",
             "R2_design",
-            "Notes",
+            "Notes"
         ],
     ).T
 
@@ -188,7 +188,7 @@ def args() -> argparse.Namespace:
 
 def main(args: argparse.Namespace):
     """Preparation process before executing pipeline. Generates all necessary files like:
-        - amp_batches_to_process.txt
+        # - amp_batches_to_process.txt
         - amp_batches.txt
         - seq_batches.txt
         - wells_cells.txt
@@ -219,10 +219,10 @@ def main(args: argparse.Namespace):
     wells_out.to_csv(f"{args.output}/wells_cells.txt", sep="\t", index=False)
 
     # store which amplification batches to process
-    logging.info("Generating amplification batches ...")
-    amp_out["Amp_batch_ID"].to_csv(
-        f"{args.output}/amp_batches_to_process.txt", sep="\t", index=False, header=False
-    )
+    # logging.info("Generating amplification batches ...")
+    # amp_out["Amp_batch_ID"].to_csv(
+    #     f"{args.output}/amp_batches_to_process.txt", sep="\t", index=False, header=False
+    # )
 
     # gene intervals
     logging.info("Generating gene intervals ...")
