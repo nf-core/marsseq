@@ -75,7 +75,7 @@ def prepare_batch_metadata(
             seq.iloc[0]["R1_design"],
             "",
             amp["R2_design"].unique()[0],
-            seq.iloc[0]["Genome_assembly"]
+            seq.iloc[0]["Genome_assembly"],
         ],
         index=[
             "Seq_batch_ID",
@@ -84,7 +84,7 @@ def prepare_batch_metadata(
             "R1_design",
             "I5_design",
             "R2_design",
-            "Notes"
+            "Notes",
         ],
     ).T
 

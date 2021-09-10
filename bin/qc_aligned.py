@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import argparse
 import os
-import sys
 import pandas as pd
 from subprocess import Popen, PIPE
 
@@ -13,15 +12,13 @@ def exec_proc(command: str):
     return output.decode("utf-8").splitlines()
 
 
-def qc_read(sam_file: str, qc_file: str, output: str, prefix: str = '_'):
+def qc_read(sam_file: str, qc_file: str, output: str, prefix: str = "_"):
     command: str = f"grep -v ^@ {sam_file} | cut -f2"
     lines = exec_proc(command)
 
     stats = pd.read_csv(qc_file, sep="\t")
     stats["mapped"] = lines.count("0") + lines.count("16")
-    stats.to_csv(
-        f"{output}/{prefix}{os.path.basename(qc_file)}", index=None, sep="\t"
-    )
+    stats.to_csv(f"{output}/{prefix}{os.path.basename(qc_file)}", index=None, sep="\t")
 
 
 if __name__ == "__main__":

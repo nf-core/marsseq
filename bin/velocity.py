@@ -101,10 +101,11 @@ def convert_to_10x(params: Tuple[str, str, str, str], chunk_size: int = 100) -> 
     """
     fastq_r1, fastq_r2, input_folder, output_folder = params
 
-    with gzopen(fastq_r1, "rt") as fq_r1, \
-         gzopen(fastq_r2, "rt") as fq_r2, \
-         gzopen(f"{output_folder}/{os.path.basename(fastq_r1)}", "wt") as fastq_r1_out, \
-         gzopen(f"{output_folder}/{os.path.basename(fastq_r2)}", "wt") as fastq_r2_out:
+    with gzopen(fastq_r1, "rt") as fq_r1, gzopen(fastq_r2, "rt") as fq_r2, gzopen(
+        f"{output_folder}/{os.path.basename(fastq_r1)}", "wt"
+    ) as fastq_r1_out, gzopen(
+        f"{output_folder}/{os.path.basename(fastq_r2)}", "wt"
+    ) as fastq_r2_out:
 
         fastq_r1 = FastqGeneralIterator(fq_r1)
         fastq_r2 = FastqGeneralIterator(fq_r2)

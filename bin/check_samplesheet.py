@@ -50,10 +50,21 @@ def check_samplesheet(file_in, file_out):
 
         ## Check header
         MIN_COLS = 3
-        HEADER = ["batch", "fastq_1", "fastq_2", "amp_batches", "seq_batches", "well_cells"]
+        HEADER = [
+            "batch",
+            "fastq_1",
+            "fastq_2",
+            "amp_batches",
+            "seq_batches",
+            "well_cells",
+        ]
         header = [x.strip('"') for x in fin.readline().strip().split(",")]
         if header[: len(HEADER)] != HEADER:
-            print("ERROR: Please check samplesheet header -> {} != {}".format(",".join(header), ",".join(HEADER)))
+            print(
+                "ERROR: Please check samplesheet header -> {} != {}".format(
+                    ",".join(header), ",".join(HEADER)
+                )
+            )
             sys.exit(1)
 
         ## Check sample entries
@@ -70,13 +81,17 @@ def check_samplesheet(file_in, file_out):
             num_cols = len([x for x in lspl if x])
             if num_cols < MIN_COLS:
                 print_error(
-                    "Invalid number of populated columns (minimum = {})!".format(MIN_COLS),
+                    "Invalid number of populated columns (minimum = {})!".format(
+                        MIN_COLS
+                    ),
                     "Line",
                     line,
                 )
 
             ## Check sample name entries
-            sample, fastq_1, fastq_2, amp_batches, seq_batches, well_cells = lspl[: len(HEADER)]
+            sample, fastq_1, fastq_2, amp_batches, seq_batches, well_cells = lspl[
+                : len(HEADER)
+            ]
             if sample:
                 if sample.find(" ") != -1:
                     print_error("Sample entry contains spaces!", "Line", line)
@@ -95,7 +110,7 @@ def check_samplesheet(file_in, file_out):
                             line,
                         )
 
-        # create same copy called valid. 
+        # create same copy called valid.
         shutil.copyfile(file_in, file_out)
 
 
