@@ -4,6 +4,9 @@ include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 options        = initOptions(params.options)
 
+/*
+ * Module for downloading any file using wget.
+ */
 process WGET {
     tag "$filename"
     label 'process_low'

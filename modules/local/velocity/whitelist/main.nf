@@ -7,7 +7,7 @@ params.options = [:]
  * Generate whitelist for StarSolo.
  */
 process VELOCITY_WHITELIST {
-    tag "${meta.id}"
+    tag "$meta.id"
     label 'process_low'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,

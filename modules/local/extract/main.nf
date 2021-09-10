@@ -3,6 +3,10 @@ include { saveFiles; getSoftwareName } from './functions'
 
 params.options = [:]
 
+/*
+ * Label R1 using labels from R2.
+ * Necessary for demultiplexing step anc QC.
+ */
 process EXTRACT_LABELS {
     tag "$meta.id"
     label 'process_medium'

@@ -4,7 +4,10 @@ include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 options        = initOptions(params.options)
 
-process MERGE_SAMS {
+/*
+ * MERGE provided SAM files
+ */
+process CAT_SAMS {
     tag "$meta"
     label 'process_low'
     publishDir "${params.outdir}",

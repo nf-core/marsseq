@@ -4,6 +4,12 @@ include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 options        = initOptions(params.options)
 
+/*
+ * Fastp module which splits the reads
+ * into specified number of reads per file.
+ * Number of reads specified in `modules.config`
+ * with default 4_000_000.
+ */
 process FASTP_SPLIT {
     tag "$meta.id"
     label 'process_medium'

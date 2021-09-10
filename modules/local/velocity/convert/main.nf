@@ -7,8 +7,8 @@ params.options = [:]
  * Convert MARS-seq raw reads into 10X format.
  */
 process VELOCITY_CONVERT {
-    tag "${meta.id}"
-    label 'process_high'
+    tag "$meta.id"
+    label 'process_high_cpu'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:"$meta.id/velocity/", meta:[:], publish_by_meta:[]) }

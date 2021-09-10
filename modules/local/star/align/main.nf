@@ -6,7 +6,7 @@ options        = initOptions(params.options)
 
 process STAR_ALIGN {
     tag "$meta.id"
-    label 'process_high'
+    label 'process_high_cpu'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:"$meta.id/velocity/", meta:meta, publish_by_meta:['id']) }

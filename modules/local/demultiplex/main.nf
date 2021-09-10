@@ -4,6 +4,11 @@ include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 options        = initOptions(params.options)
 
+/*
+ * Demultiplex reads using barcodes. At the same time
+ * collect qc reports which will be used later to 
+ * construct final QC report per batch.
+ */
 process DEMULTIPLEX {
     tag "$meta"
     label 'process_medium'

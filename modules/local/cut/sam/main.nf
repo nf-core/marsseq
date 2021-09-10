@@ -4,10 +4,10 @@ include { saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 
 /*
- * Trim read
+ * Helper: trim SAM read
  */
-process TRIM_READ {
-    tag "${meta.id}"
+process CUT_SAM {
+    tag "$meta.id"
     label 'process_low'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,

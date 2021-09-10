@@ -4,9 +4,9 @@ include { saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 
 /*
- * Construct spike-ins fasta (ERCC.fasta)
+ * MERGE provided FASTA files
  */
-process MERGE_FASTA {
+process CAT_FASTA {
     tag "${params.genome}.fasta"
     label 'process_tiny'
     publishDir "${params.outdir}",

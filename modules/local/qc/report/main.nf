@@ -33,6 +33,7 @@ process QC_REPORT {
     mkdir -p output/QC_reports
     mkdir _temp/
 
+    export TMPDIR=/tmp
     qc_report.r \\
         $wells_cells \\
         $amp_batches \\

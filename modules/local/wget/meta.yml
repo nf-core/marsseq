@@ -1,5 +1,4 @@
 name: wget
-## TODO nf-core: Add a description of the module and list keywords
 description: write your description here
 keywords:
   - sort
@@ -12,7 +11,6 @@ tools:
       doi: ""
       licence: ['GPL v3']
 
-## TODO nf-core: Add a description of all of the variables used as input
 input:
   - meta:
       type: map
@@ -26,7 +24,6 @@ input:
       type: string
       description: URL link of the desired file.
 
-## TODO nf-core: Add a description of all of the variables used as output
 output:
   - meta:
       type: map
