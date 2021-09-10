@@ -28,6 +28,6 @@ workflow PREPARE_PIPELINE {
     gene_intervals         = INIT.out.gene_intervals
     seq_batches            = INIT.out.seq_batches
     wells_cells            = INIT.out.wells_cells
-    fastp_reads            = FASTP_SPLIT.out.reads   // channel: [ val(meta), path: *.fastq.gz ]
-    fastp_version          = FASTP_SPLIT.out.version // path: *.version.txt
+    fastp_reads            = FASTP_SPLIT.out.reads    // channel: [ val(meta), path: *.fastq.gz ]
+    fastp_version          = FASTP_SPLIT.out.version  // path: *.version.txt
 }
