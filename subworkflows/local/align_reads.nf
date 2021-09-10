@@ -6,8 +6,8 @@ def modules = params.modules.clone()
 params.options = [:]
 
 include { BOWTIE2_ALIGN   } from '../../modules/local/bowtie2/align/main' addParams( options: modules['bowtie2_align'] )
+include { CUT_SAM         } from '../../modules/local/cut/sam/main'       addParams( options: modules['cut_sam'] )
 include { QC_ALIGNED      } from '../../modules/local/qc/align/main'      addParams( options: modules['qc_aligned'] )
-include { TRIM_READ       } from '../../modules/local/cut/sam/main'       addParams( options: modules['trim_reads'] )
 
 
 workflow ALIGN_READS {
@@ -23,9 +23,9 @@ workflow ALIGN_READS {
 
     QC_ALIGNED ( BOWTIE2_ALIGN.out.sam, qc )
 
-    TRIM_READ ( BOWTIE2_ALIGN.out.sam )
+    CUT_SAM ( BOWTIE2_ALIGN.out.sam )
     
     emit:
-    sam             = TRIM_READ.out.sam
+    sam             = CUT_SAM.out.sam
     bowtie2_version = BOWTIE2_ALIGN.out.version  // path: *.version.txt
 }
