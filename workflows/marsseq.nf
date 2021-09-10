@@ -9,7 +9,6 @@ def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
 // Validate input parameters
 WorkflowMarsseq.initialise(params, log)
 
-// TODO nf-core: Add all file path parameters for the pipeline to the list below
 // Check input path parameters to see if they exist
 def checkPathParamList = [ params.input, params.multiqc_config, params.fasta, params.gtf ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
@@ -39,7 +38,7 @@ def modules = params.modules.clone()
 // MODULE: Local to the pipeline
 //
 include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions' addParams( options: [publish_files : ['tsv':'']] )
-include { MERGE_SAMS            } from '../modules/local/cat/sam/main'          addParams( options: [:] )
+include { CAT_SAMS              } from '../modules/local/cat/sam/main'          addParams( options: [:] )
 include { QC_REPORT             } from '../modules/local/qc/report/main'        addParams( options: [:] )
 
 //
@@ -113,10 +112,10 @@ workflow MARSSEQ {
         .groupTuple(by: [0], sort: { it.name })
         .set { ch_sams }
 
-    MERGE_SAMS ( ch_sams )
+    CAT_SAMS ( ch_sams )
 
     DEMULTIPLEX_READS ( 
-        MERGE_SAMS.out.sam,
+        CAT_SAMS.out.sam,
         PREPARE_PIPELINE.out.amp_batches,
         PREPARE_PIPELINE.out.seq_batches,
         PREPARE_PIPELINE.out.wells_cells,
@@ -126,6 +125,7 @@ workflow MARSSEQ {
         ch_oligos
     )
 
+    // QC report from demultiplexing
     DEMULTIPLEX_READS.out.qc_rd.groupTuple()
         .join(DEMULTIPLEX_READS.out.qc_pdf.groupTuple())
         .combine(PREPARE_PIPELINE.out.amp_batches)
@@ -137,19 +137,20 @@ workflow MARSSEQ {
     //
     // MODULE: Velocity
     //
-    VELOCITY ( PREPARE_PIPELINE.out.fastp_reads )
+    if (params.velocity) {
+        VELOCITY ( PREPARE_PIPELINE.out.fastp_reads )
+        ch_software_versions = ch_software_versions.mix(VELOCITY.out.star_version.ifEmpty(null))
+    }
 
     //
     // MODULE: Run FastQC
     //
-    FASTQC (
-        INPUT_CHECK.out.reads
-    )
+    FASTQC ( ch_batches )
+    
     ch_software_versions = ch_software_versions
         .mix(PREPARE_PIPELINE.out.fastp_version.ifEmpty(null))
         .mix(FASTQC.out.version.first().ifEmpty(null))
         .mix(ALIGN_READS.out.bowtie2_version.ifEmpty(null))
-        .mix(VELOCITY.out.star_version.ifEmpty(null))
 
     //
     // MODULE: Pipeline reporting
