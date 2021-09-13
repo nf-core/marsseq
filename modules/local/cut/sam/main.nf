@@ -24,12 +24,11 @@ process CUT_SAM {
     tuple val(meta), path(read)
 
     output:
-    tuple val(meta), path("trimmed/*.sam"), emit: sam
+    tuple val(meta), path("*.trimmed.sam"), emit: sam
 
     script:
-    def read_name = read.baseName + '.sam'
+    def read_name = read.baseName + '.trimmed.sam'
     """
-    mkdir trimmed/
-    cut -f1-9,12- $read > trimmed/$read_name
+    cut -f1-9,12- $read > $read_name
     """
 }
