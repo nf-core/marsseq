@@ -54,6 +54,6 @@ workflow DEMULTIPLEX_READS {
     QC_BATCH ( ch_demultiplex_output )
 
     emit:
-    qc_rd = QC_BATCH.out.rd
+    qc_rd  = QC_BATCH.out.rd
     qc_pdf = QC_BATCH.out.pdf
 }

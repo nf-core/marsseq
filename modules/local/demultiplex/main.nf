@@ -10,7 +10,7 @@ options        = initOptions(params.options)
  * construct final QC report per batch.
  */
 process DEMULTIPLEX {
-    tag "$meta"
+    tag "$meta [$amp_batch]"
     label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
