@@ -23,6 +23,12 @@ workflow PREPARE_PIPELINE {
     // split fastq reads by predefined number of reads per fastq file
     FASTP_SPLIT ( batches )
 
+    // verify that split was performed correctly
+    // R1 and R2 should always have a same pair
+    if ( FASTP_SPLIT.out.reads.last().length() % 2 != 0 ) {
+        exit 1, 'Error while splitting FASTQ files. Read pairs don\'t match!'
+    }
+
     emit:
     amp_batches            = INIT.out.amp_batches
     gene_intervals         = INIT.out.gene_intervals
