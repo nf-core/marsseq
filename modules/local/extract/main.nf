@@ -35,7 +35,7 @@ process EXTRACT_LABELS {
     """
     gunzip $reads
 
-    mkdir labeled_reads labeled_reads/qc
+    mkdir labeled_reads
 
     extract_labels.pl \\
         $r1 \\
