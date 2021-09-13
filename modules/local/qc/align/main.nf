@@ -4,7 +4,7 @@ include { saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 
 /*
- * Construct spike-ins fasta (ERCC.fasta)
+ * QC report after alignment
  */
 process QC_ALIGNED {
     tag "$meta.id"
@@ -13,11 +13,11 @@ process QC_ALIGNED {
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), meta:[:], publish_by_meta:[]) }
 
-    conda (params.enable_conda ? "bioconda::openpyxl==2.6.1 conda-forge::pandas==1.2.4" : null)
+    conda (params.enable_conda ? "conda-forge::r-mass==7.3_54 conda-forge::r-zoo==1.8_9 conda-forge::r-gplots==3.1.1" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/mulled-v2-0bcca2890a3ab7be29a83e813a02d340d6f54660:4cb478c6e57df2ef85ea5f8eae6d717c017962cd-0"
+        container "https://depot.galaxyproject.org/singularity/mulled-v2-520de0c6650803e8b1dab89be11109011a0418b0:464283c471792ace52fbd7b1eea34a42ec86ac81-0"
     } else {
-        container "quay.io/biocontainers/mulled-v2-0bcca2890a3ab7be29a83e813a02d340d6f54660:4cb478c6e57df2ef85ea5f8eae6d717c017962cd-0"
+        container "quay.io/biocontainers/mulled-v2-520de0c6650803e8b1dab89be11109011a0418b0:464283c471792ace52fbd7b1eea34a42ec86ac81-0"
     }
 
     input:
@@ -29,9 +29,8 @@ process QC_ALIGNED {
 
     script:
     """
-    qc_aligned.py \\
-        --sam $sam \\
-        --qc $labeled_qc \\
-        --output .
+    qc_align.r \\
+        $sam \\
+        $labeled_qc
     """
 }
