@@ -21,6 +21,7 @@ include { CREATE_ERCC_FASTA      } from '../modules/local/prepare/ercc/main'    
 include { CAT_FASTA              } from '../modules/local/cat/fasta/main'               addParams( options: modules['cat_fasta'] )
 include { BOWTIE2_BUILD          } from '../modules/nf-core/modules/bowtie2/build/main' addParams( options: modules['bowtie2_index'] )
 include { STAR_GENOMEGENERATE    } from '../modules/local/star/genomegenerate/main'     addParams( options: modules['star_index'] )
+include { HISAT2_BUILD           } from '../modules/local/hisat2/build/main'            addParams( options: modules['hisat2_index'] )
 
 /*
 ========================================================================================
@@ -43,11 +44,19 @@ workflow BUILD_REFERENCES {
     ch_fasta      = CAT_FASTA ( ch_fasta, ch_ercc_fasta ).fasta
     
     // build bowtie2 index for core alignment
-    BOWTIE2_BUILD( ch_fasta )
+    if (params.aligner == "bowtie2") {
+        BOWTIE2_BUILD( ch_fasta )
+    }
     
-    // build STAR index for velocity
-    STAR_GENOMEGENERATE( ch_fasta, ch_gtf )
+    if (params.aligner == "hisat2") {
+        HISAT2_BUILD ( ch_fasta )
+    }
 
+    // build STAR index for velocity
+    if (params.velocity) {
+        STAR_GENOMEGENERATE( ch_fasta, ch_gtf )
+    }
+    
 }
 
 /*

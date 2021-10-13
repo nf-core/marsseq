@@ -6,7 +6,7 @@ def modules = params.modules.clone()
 params.options = [:]
 
 include { DEMULTIPLEX } from '../../modules/local/demultiplex/main' addParams( options: modules['demultiplex'] )
-include { QC_BATCH    } from '../../modules/local/qc/batch/main'    addParams( options: modules['demultiplex'] )
+include { QC_BATCH    } from '../../modules/local/qc/batch/main'    addParams( options: [:]                    )
 
 
 workflow DEMULTIPLEX_READS {

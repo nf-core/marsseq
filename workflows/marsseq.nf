@@ -86,7 +86,6 @@ workflow MARSSEQ {
     ch_oligos               = Channel.from("$projectDir/data/oligos.txt")
     ch_spike_seq            = Channel.from("$projectDir/data/spike-seq.txt")
     ch_spike_concentrations = Channel.from("$projectDir/data/spike-concentrations.txt")
-    ch_bowtie2_index        = Channel.from(WorkflowMain.getGenomeAttribute(params, 'bowtie2'))
 
     //
     // SUBWORKFLOW: Read in samplesheet, validate and stage input files
@@ -101,21 +100,31 @@ workflow MARSSEQ {
         ch_oligos, 
         PREPARE_PIPELINE.out.amp_batches, 
         PREPARE_PIPELINE.out.seq_batches, 
-        PREPARE_PIPELINE.out.fastp_reads
+        PREPARE_PIPELINE.out.reads
     )
 
-    ALIGN_READS ( ch_bowtie2_index, LABEL_READS.out.read, LABEL_READS.out.qc )
+    ch_aligner_index = Channel.from(WorkflowMain.getGenomeAttribute(params, params.aligner))
+    ALIGN_READS ( ch_aligner_index, LABEL_READS.out.read, LABEL_READS.out.qc )
 
-    // merge sam files into one file
-    ALIGN_READS.out.sam
-        .map { meta, sam -> [ meta.id, sam ] }
-        .groupTuple(by: [0], sort: { it.name })
-        .set { ch_sams }
+    ch_sam = Channel.empty()
+    if (params.aligner == "bowtie2") {
+        // merge sam files into one file
+        ALIGN_READS.out.sam
+            .map { meta, sam -> [ meta.id, sam ] }
+            .groupTuple(by: [0], sort: { it.name })
+            .set { ch_sams }
 
-    CAT_SAMS ( ch_sams )
+        ch_sam = CAT_SAMS ( ch_sams )
+    }
+
+    if (params.aligner == "hisat2") {
+        ALIGN_READS.out.sam
+            .map { meta, sam -> [meta.id, sam ] }
+            .set { ch_sam }
+    }
 
     DEMULTIPLEX_READS ( 
-        CAT_SAMS.out.sam,
+        ch_sam,
         PREPARE_PIPELINE.out.amp_batches,
         PREPARE_PIPELINE.out.seq_batches,
         PREPARE_PIPELINE.out.wells_cells,
@@ -138,7 +147,7 @@ workflow MARSSEQ {
     // MODULE: Velocity
     //
     if (params.velocity) {
-        VELOCITY ( PREPARE_PIPELINE.out.fastp_reads )
+        VELOCITY ( PREPARE_PIPELINE.out.reads )
         ch_software_versions = ch_software_versions.mix(VELOCITY.out.star_version.ifEmpty(null))
     }
 
@@ -150,7 +159,7 @@ workflow MARSSEQ {
     ch_software_versions = ch_software_versions
         .mix(PREPARE_PIPELINE.out.fastp_version.ifEmpty(null))
         .mix(FASTQC.out.version.first().ifEmpty(null))
-        .mix(ALIGN_READS.out.bowtie2_version.ifEmpty(null))
+        .mix(ALIGN_READS.out.aligner_version.ifEmpty(null))
 
     //
     // MODULE: Pipeline reporting
