@@ -35,16 +35,6 @@ WorkflowMain.initialise(workflow, params, log)
 ========================================================================================
 */
 
-//
-// WORKFLOW: Run main nf-core/marsseq analysis pipeline
-//
-workflow NFCORE_MARSSEQ {
-
-    include { MARSSEQ } from './workflows/marsseq'
-    MARSSEQ ()
-
-}
-
 /*
 ========================================================================================
     RUN ALL WORKFLOWS
@@ -56,7 +46,9 @@ workflow NFCORE_MARSSEQ {
 // See: https://github.com/nf-core/rnaseq/issues/619
 //
 workflow {
-    NFCORE_MARSSEQ ()
+
+    include { BUILD_REFERENCES } from './workflows/build_references'
+    BUILD_REFERENCES ()
 }
 
 /*

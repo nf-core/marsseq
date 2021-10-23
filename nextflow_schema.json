@@ -52,7 +52,8 @@
             "properties": {
                 "genome": {
                     "type": "string",
-                    "description": "Name of iGenomes reference.",
+                    "description": "Name of Genomes reference.",
+                    "default": "mm10",
                     "fa_icon": "fas fa-book",
                     "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
                 },
@@ -65,20 +66,57 @@
                     "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
                     "fa_icon": "far fa-file-code"
                 },
-                "igenomes_base": {
+                "gtf": {
+                    "type": "string",
+                    "format": "file-path",
+                    "mimetype": "text/plain",
+                    "pattern": "^\\S+\\.gtf(\\.gz)?$",
+                    "description": "Path to GTF annotation file.",
+                    "fa_icon": "fas fa-code-branch",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified."
+                },
+                "genomes_base": {
                     "type": "string",
                     "format": "directory-path",
-                    "description": "Directory / URL base for iGenomes references.",
-                    "default": "s3://ngi-igenomes/igenomes",
+                    "description": "Directory for Genomes references.",
                     "fa_icon": "fas fa-cloud-download-alt",
                     "hidden": true
-                },
-                "igenomes_ignore": {
+                }
+            }
+        },
+        "alignment_options": {
+            "title": "Alignment options",
+            "type": "object",
+            "fa_icon": "fas fa-map-signs",
+            "description": "Options to adjust parameters and filtering criteria for read alignments.",
+            "properties": {
+                "aligner": {
+                    "type": "string",
+                    "default": "aligner",
+                    "description": "Specifies the alignment algorithm based on 'release' automatically - available options are 'bowtie2' and 'hisat2'.",
+                    "fa_icon": "fas fa-map-signs",
+                    "enum": [
+                        "bowtie2",
+                        "hisat2"
+                    ]
+                }
+            }
+        },
+        "rna_velocity": {
+            "title": "RNA velocity",
+            "type": "object",
+            "description": "Convert original reads to 10X format in order to execute RNA velocity",
+            "default": "",
+            "properties": {
+                "velocity": {
                     "type": "boolean",
-                    "description": "Do not load the iGenomes reference config.",
-                    "fa_icon": "fas fa-ban",
-                    "hidden": true,
-                    "help_text": "Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`."
+                    "default": false,
+                    "description": "Run RNA velocity"
+                },
+                "read_length": {
+                    "type": "string",
+                    "fa_icon": "fas fa-ruler",
+                    "description": "Read length required for STAR aligner"
                 }
             }
         },
@@ -178,6 +216,17 @@
             "description": "Less common options for the pipeline, typically set in a config file.",
             "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
             "properties": {
+                "release": {
+                    "type": "integer",
+                    "description": "MARS-seq version",
+                    "fa_icon": "fas fa-code-branch",
+                    "default": 2,
+                    "hidden": false,
+                    "enum": [
+                        1,
+                        2
+                    ]
+                },
                 "help": {
                     "type": "boolean",
                     "description": "Display help text.",

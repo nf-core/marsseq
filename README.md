@@ -16,8 +16,12 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Write a 1-2 sentence summary of what data the pipeline is for and what it does -->
-**nf-core/marsseq** is a bioinformatics best-practice analysis pipeline for MARS-seq 1/2 preprocessing pipeline.
+**nf-core/marsseq** is a bioinformatics best-practice analysis pipeline for MARS-seq 1/2 preprocessing pipeline. We provide two version of pipeline depending on the choice of aligner.
+
+1. `Bowtie2` from [Keren-Shaul et al., 2019](https://www.nature.com/articles/s41596-019-0164-4)
+2. `HISAT2` from [Deczkowska et al., 2021](https://www.nature.com/articles/s41591-021-01344-3)
+
+As an additional work we have developed custom script to run velocity inference using `StarSolo`. We do this by converting the reads into 10X format. For more information please have a look at the [Proks et al., XXX 2021](https://example.com).
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
@@ -37,7 +41,13 @@ On release, automated continuous integration tests run the pipeline on a full-si
 
 2. Install any of [`Docker`](https://docs.docker.com/engine/installation/), [`Singularity`](https://www.sylabs.io/guides/3.0/user-guide/), [`Podman`](https://podman.io/), [`Shifter`](https://nersc.gitlab.io/development/shifter/how-to-use/) or [`Charliecloud`](https://hpc.github.io/charliecloud/) for full pipeline reproducibility _(please only use [`Conda`](https://conda.io/miniconda.html) as a last resort; see [docs](https://nf-co.re/usage/configuration#basic-configuration-profiles))_
 
-3. Download the pipeline and test it on a minimal dataset with a single command:
+3. Download and build necessary references for your genome of choice.
+
+    ```console
+    nextflow run nf-core/marsseq --genome 'mm10' --build_references
+    ```
+
+4. Download the pipeline and test it on a minimal dataset with a single command:
 
     ```console
     nextflow run nf-core/marsseq -profile test,<docker/singularity/podman/shifter/charliecloud/conda/institute>
@@ -47,7 +57,7 @@ On release, automated continuous integration tests run the pipeline on a full-si
     > * If you are using `singularity` then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the `--singularity_pull_docker_container` parameter to pull and convert the Docker image instead. Alternatively, it is highly recommended to use the [`nf-core download`](https://nf-co.re/tools/#downloading-pipelines-for-offline-use) command to pre-download all of the required containers before running the pipeline and to set the [`NXF_SINGULARITY_CACHEDIR` or `singularity.cacheDir`](https://www.nextflow.io/docs/latest/singularity.html?#singularity-docker-hub) Nextflow options to be able to store and re-use the images from a central location for future pipeline runs.
     > * If you are using `conda`, it is highly recommended to use the [`NXF_CONDA_CACHEDIR` or `conda.cacheDir`](https://www.nextflow.io/docs/latest/conda.html) settings to store the environments in a central location for future pipeline runs.
 
-4. Start running your own analysis!
+5. Start running your own analysis!
 
     <!-- TODO nf-core: Update the example "typical command" below used to run the pipeline -->
 
@@ -65,7 +75,12 @@ nf-core/marsseq was originally written by Martin Proks.
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+* Jose Alejandro Romero Herrera ([@joseale2310](https://github.com/joseale2310))
+* Maxime Garcia ([@maxulysse](https://github.com/maxulysse))
+
+Keren-Shaul, H., Kenigsberg, E., Jaitin, D.A. et al. MARS-seq2.0: an experimental and analytical pipeline for indexed sorting combined with single-cell RNA sequencing. Nat Protoc 14, 1841–1862 (2019). https://doi.org/10.1038/s41596-019-0164-4
+
+Deczkowska, A., David, E., Ramadori, P. et al. XCR1+ type 1 conventional dendritic cells drive liver pathology in non-alcoholic steatohepatitis. Nat Med 27, 1043–1054 (2021). https://doi.org/10.1038/s41591-021-01344-3
 
 ## Contributions and Support
 
