@@ -25,7 +25,7 @@ workflow PREPARE_PIPELINE {
 
     if (params.aligner == "bowtie2") {
         // split fastq reads by predefined number of reads per fastq file
-        ch_reads = FASTP_SPLIT ( batches ).out.reads
+        ch_reads = FASTP_SPLIT ( INIT.out.reads ).reads
         ch_fastp_version = FASTP_SPLIT.out.version
 
         // verify that split was performed correctly
@@ -37,14 +37,14 @@ workflow PREPARE_PIPELINE {
 
     if (params.aligner == "hisat2") {
         // No need to split the files into smaller ones
-        ch_reads = batches
+        ch_reads = INIT.out.reads
     }
 
     emit:
-    amp_batches            = INIT.out.amp_batches
-    gene_intervals         = INIT.out.gene_intervals
-    seq_batches            = INIT.out.seq_batches
-    wells_cells            = INIT.out.wells_cells
-    reads                  = ch_reads               // channel: [ val(meta), path: *.fastq.gz ]
-    fastp_version          = ch_fastp_version       // path: *.version.txt
+    amp_batches    = INIT.out.amp_batches
+    gene_intervals = INIT.out.gene_intervals
+    seq_batches    = INIT.out.seq_batches
+    wells_cells    = INIT.out.wells_cells
+    reads          = ch_reads               // channel: [ val(meta), path: *.fastq.gz ]
+    fastp_version  = ch_fastp_version       // path: *.version.txt
 }

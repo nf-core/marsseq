@@ -32,10 +32,11 @@ process PREPARE_PIPELINE {
     path(ercc_regions)
     
     output:
-    path "amp_batches.txt"           , emit: amp_batches
-    path "gene_intervals.txt"        , emit: gene_intervals
-    path "seq_batches.txt"           , emit: seq_batches
-    path "wells_cells.txt"           , emit: wells_cells
+    path "amp_batches.txt"      , emit: amp_batches
+    path "gene_intervals.txt"   , emit: gene_intervals
+    path "seq_batches.txt"      , emit: seq_batches
+    path "wells_cells.txt"      , emit: wells_cells
+    tuple val(meta), path(reads), emit: reads
 
     script:
     
