@@ -16,24 +16,12 @@
 
 ## Introduction
 
-**nf-core/marsseq** is a bioinformatics best-practice analysis pipeline for MARS-seq 1/2 preprocessing pipeline. We provide two version of pipeline depending on the choice of aligner.
-
-1. `Bowtie2` from [Keren-Shaul et al., 2019](https://www.nature.com/articles/s41596-019-0164-4)
-2. `HISAT2` from [Deczkowska et al., 2021](https://www.nature.com/articles/s41591-021-01344-3)
-
-As an additional work we have developed custom script to run velocity inference using `StarSolo`. We do this by converting the reads into 10X format. For more information please have a look at the [Proks et al., XXX 2021](https://example.com).
+**nf-core/marsseq** is a bioinformatics best-practice analysis pipeline for MARS-seq v2.0 preprocessing pipeline. As an additional work we have developed custom set of scripts to run velocity inference using `StarSolo`. We do so by converting the raw reads into 10X v2 format. For more information please have a look at the [Proks et al., XXX 2023](https://example.com).
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
 <!-- TODO nf-core: Add full-sized test dataset and amend the paragraph below if applicable -->
 On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources. The results obtained from the full-sized test can be viewed on the [nf-core website](https://nf-co.re/marsseq/results).
-
-## Pipeline summary
-
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
-
-1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
 
 ## Quick Start
 
@@ -79,8 +67,6 @@ We thank the following people for their extensive assistance in the development 
 * Maxime Garcia ([@maxulysse](https://github.com/maxulysse))
 
 Keren-Shaul, H., Kenigsberg, E., Jaitin, D.A. et al. MARS-seq2.0: an experimental and analytical pipeline for indexed sorting combined with single-cell RNA sequencing. Nat Protoc 14, 1841–1862 (2019). https://doi.org/10.1038/s41596-019-0164-4
-
-Deczkowska, A., David, E., Ramadori, P. et al. XCR1+ type 1 conventional dendritic cells drive liver pathology in non-alcoholic steatohepatitis. Nat Med 27, 1043–1054 (2021). https://doi.org/10.1038/s41591-021-01344-3
 
 ## Contributions and Support
 
