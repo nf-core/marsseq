@@ -22,19 +22,10 @@ workflow ALIGN_READS {
     ch_sams = Channel.empty()
     ch_aligner_version = Channel.empty()
 
-    if (params.aligner == "bowtie2") {
-        BOWTIE2_ALIGN ( ch_reads )
+    BOWTIE2_ALIGN ( ch_reads )
 
-        ch_sams = BOWTIE2_ALIGN.out.sam
-        ch_aligner_version = BOWTIE2_ALIGN.out.version
-    }
-
-    if (params.aligner == "hisat2") {
-        HISAT2_ALIGN ( ch_reads )
-
-        ch_sams = HISAT2_ALIGN.out.sam
-        ch_aligner_version = HISAT2_ALIGN.out.version
-    }
+    ch_sams = BOWTIE2_ALIGN.out.sam
+    ch_aligner_version = BOWTIE2_ALIGN.out.version
 
     QC_ALIGNED ( ch_sams, qc )
 

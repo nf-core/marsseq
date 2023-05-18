@@ -10,18 +10,14 @@
 ========================================================================================
 */
 
-// Don't overwrite global params.modules, create a copy instead and use that within the main script.
-def modules = params.modules.clone()
-
-include { WGET as DOWNLOAD_FASTA } from '../modules/local/wget/main'                    addParams( options: modules['wget'] )
-include { WGET as DOWNLOAD_GTF   } from '../modules/local/wget/main'                    addParams( options: modules['wget'] )
-include { GUNZIP as GUNZIP_FASTA } from '../modules/nf-core/modules/gunzip/main'        addParams( options: modules['gunzip'] )
-include { GUNZIP as GUNZIP_GTF   } from '../modules/nf-core/modules/gunzip/main'        addParams( options: modules['gunzip'] )
-include { CREATE_ERCC_FASTA      } from '../modules/local/prepare/ercc/main'            addParams( options: modules['create_ercc_fasta'] )
-include { CAT_FASTA              } from '../modules/local/cat/fasta/main'               addParams( options: modules['cat_fasta'] )
-include { BOWTIE2_BUILD          } from '../modules/nf-core/modules/bowtie2/build/main' addParams( options: modules['bowtie2_index'] )
-include { STAR_GENOMEGENERATE    } from '../modules/local/star/genomegenerate/main'     addParams( options: modules['star_index'] )
-include { HISAT2_BUILD           } from '../modules/local/hisat2/build/main'            addParams( options: modules['hisat2_index'] )
+include { WGET as DOWNLOAD_FASTA } from '../modules/local/wget/main'
+include { WGET as DOWNLOAD_GTF   } from '../modules/local/wget/main'
+include { GUNZIP as GUNZIP_FASTA } from '../modules/nf-core/modules/gunzip/main'
+include { GUNZIP as GUNZIP_GTF   } from '../modules/nf-core/modules/gunzip/main'
+include { CREATE_ERCC_FASTA      } from '../modules/local/prepare/ercc/main'
+include { CAT_FASTA              } from '../modules/local/cat/fasta/main'
+include { BOWTIE2_BUILD          } from '../modules/nf-core/modules/bowtie2/build/main'
+include { STAR_GENOMEGENERATE    } from '../modules/local/star/genomegenerate/main'
 
 /*
 ========================================================================================
@@ -43,14 +39,8 @@ workflow BUILD_REFERENCES {
     ch_ercc_fasta = CREATE_ERCC_FASTA( Channel.from("$projectDir/data/spike-seq.txt") ).fasta
     ch_fasta      = CAT_FASTA ( ch_fasta, ch_ercc_fasta ).fasta
     
-    // build bowtie2 index for core alignment
-    if (params.aligner == "bowtie2") {
-        BOWTIE2_BUILD( ch_fasta )
-    }
-    
-    if (params.aligner == "hisat2") {
-        HISAT2_BUILD ( ch_fasta )
-    }
+    // build bowtie2 index
+    BOWTIE2_BUILD( ch_fasta )
 
     // build STAR index for velocity
     if (params.velocity) {
@@ -66,8 +56,9 @@ workflow BUILD_REFERENCES {
 */
 
 workflow.onComplete {
-    def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
-    // NfcoreTemplate.email(workflow, params, summary_params, projectDir, log)
+    if (params.email || params.email_on_fail) {
+        NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report)
+    }
     NfcoreTemplate.summary(workflow, params, log)
 }
 
