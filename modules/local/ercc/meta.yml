@@ -1,0 +1,29 @@
+name: create_ercc
+description: A module for generating ERCC FASTA file from list of ERCCs
+keywords:
+  - ercc
+  - create
+tools:
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - spikeins:
+      type: file
+      description: ERCC text file
+      pattern: "*.txt"
+
+output:
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+  - file_out:
+      type: file
+      description: ERCC FASTA file
+      pattern: "ercc.fa"
+
+authors:
+  - "@matq007"

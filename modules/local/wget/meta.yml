@@ -17,12 +17,15 @@ input:
       description: |
         Groovy Map containing sample information
         e.g. [ id:'test', single_end:false ]
-  - filename:
-      type: sting
-      description: Custom filename downloaded from the url.
   - url:
       type: string
       description: URL link of the desired file.
+  - file_path:
+      type: string
+      description: Full path to filename
+  - extension:
+      type: string
+      description: Filename extesion like for example ".gz"
 
 output:
   - meta:
@@ -30,13 +33,21 @@ output:
       description: |
         Groovy Map containing sample information
         e.g. [ id:'test', single_end:false ]
-  - version:
+
+  - versions:
       type: file
-      description: File containing software version
-      pattern: "*.{version.txt}"
+      description: File containing software versions
+      pattern: "versions.yml"
+
+  - output:
+      type: file
+      description: File containing output
+      pattern: "*"
+
   - file:
       type: file
-      description: Downloaded file
+      description: Path to any file downloaded
+      pattern: "*"
 
 authors:
   - "@matq007"

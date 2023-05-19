@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 import argparse
-import pandas as pd
 import os
 import sys
+
+import pandas as pd
 
 ROW_LENGTH: int = 70
 
@@ -33,6 +34,7 @@ def create_fasta(args: argparse.Namespace):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument('--version', action='version', version='v1.0')
     parser.add_argument(
         "--input", type=str, help="Input file [annotations/spike-seq.txt]"
     )

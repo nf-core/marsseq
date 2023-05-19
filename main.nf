@@ -34,8 +34,8 @@ WorkflowMain.initialise(workflow, params, log)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { MARSSEQ } from './workflows/marsseq'
 include { BUILD_REFERENCES } from './workflows/build_references'
+// include { MARSSEQ } from './workflows/marsseq'
 
 //
 // WORKFLOW: Run main nf-core/marsseq analysis pipeline
@@ -45,7 +45,7 @@ workflow NFCORE_MARSSEQ {
     if (params.build_references) {
         BUILD_REFERENCES ()
     } else {
-        MARSSEQ ()
+        // MARSSEQ ()
     }
     
 }
