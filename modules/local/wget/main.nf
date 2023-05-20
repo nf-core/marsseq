@@ -22,8 +22,7 @@ process WGET {
     def args = task.ext.args ?: ""
     // NOTE: get last extension, will fail for ther cases like tar.gz
     extension = url.split("\\.")[-1]
-    basename = filename.split('/')[-1]
-    outfile = "${basename}.${extension}"
+    outfile = "${filename}.${extension}"
     meta = [ "id": "$outfile" ]
     """
     wget $args $url -O $outfile

@@ -93,3 +93,14 @@ You can cite the `nf-core` publication as follows:
 > Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
 >
 > _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).
+
+```bash
+module load java/11.0.15 singularity/3.8.0 nextflow/22.10.6
+
+export NXF_OPTS='-Xms1g -Xmx4g'
+export NXF_HOME=/scratch/Brickman/pipelines/nfcore
+export NXF_TEMP=/scratch/Brickman/pipelines/tmpdir
+export NXF_SINGULARITY_CACHEDIR=/scratch/Brickman/singularity-images
+
+nextflow run . -profile ku_sund_dangpu --genome mm10 --build_references --outdir ./references --input /home/fdb589/projects/people/fdb589/projects/proks_et_al_2022/pipeline/SB26/design.csv
+```
