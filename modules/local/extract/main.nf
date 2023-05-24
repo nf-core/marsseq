@@ -1,8 +1,3 @@
-// Import generic module functions
-include { saveFiles; getSoftwareName } from './functions'
-
-params.options = [:]
-
 /*
  * Label R1 using labels from R2.
  * Necessary for demultiplexing step anc QC.
@@ -10,16 +5,11 @@ params.options = [:]
 process EXTRACT_LABELS {
     tag "$meta.id"
     label 'process_medium'
-    publishDir "${params.outdir}",
-        mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), meta:[:], publish_by_meta:[]) }
 
-    conda (params.enable_conda ? "bioconda::conda-forge==5.22.2.1" : null)
-    if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/perl:5.22.2.1"
-    } else {
-        container "quay.io/biocontainers/perl:5.22.2.1"
-    }
+    conda "bioconda::conda-forge==5.22.2.1"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/perl:5.22.2.1' :
+        'quay.io/biocontainers/perl:5.22.2.1' }"
 
     input:
     tuple val(meta), path(reads), path(oligos), path(amp_batches), path(seq_batches)
@@ -28,13 +18,16 @@ process EXTRACT_LABELS {
     tuple val(meta), path("labeled_reads/*.fastq"), emit: labeled_read
     path "labeled_reads/*.txt"                    , emit: qc
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
+    def args = task.ext.args ?: ''
     def r1 = reads[0].baseName - '.gz'
     def r2 = reads[1].baseName - '.gz'
     def qc = r1 - '.fastq' + '.txt'
     """
     gunzip $reads
-
     mkdir labeled_reads
 
     extract_labels.pl \\

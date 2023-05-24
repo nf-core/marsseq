@@ -98,14 +98,10 @@ class RowChecker:
 
     def _validate_pair(self, row):
         """Assert that read pairs have the same file extension. Report pair status."""
-        if row[self._first_col] and row[self._second_col]:
-            row[self._single_col] = False
-            first_col_suffix = Path(row[self._first_col]).suffixes[-2:]
-            second_col_suffix = Path(row[self._second_col]).suffixes[-2:]
-            if first_col_suffix != second_col_suffix:
-                raise AssertionError("FASTQ pairs must have the same file extensions.")
-        else:
-            row[self._single_col] = True
+        first_col_suffix = Path(row[self._first_col]).suffixes[-2:]
+        second_col_suffix = Path(row[self._second_col]).suffixes[-2:]
+        if first_col_suffix != second_col_suffix:
+            raise AssertionError("FASTQ pairs must have the same file extensions.")
 
     def _validate_fastq_format(self, filename):
         """Assert that a given filename has one of the expected FASTQ extensions."""
@@ -125,11 +121,11 @@ class RowChecker:
         """
         if len(self._seen) != len(self.modified):
             raise AssertionError("The pair of sample name and FASTQ must be unique.")
-        seen = Counter()
-        for row in self.modified:
-            sample = row[self._sample_col]
-            seen[sample] += 1
-            row[self._sample_col] = f"{sample}_T{seen[sample]}"
+        # seen = Counter()
+        # for row in self.modified:
+        #     sample = row[self._sample_col]
+        #     seen[sample] += 1
+        #     row[self._sample_col] = f"{sample}_T{seen[sample]}"
 
 
 def read_head(handle, num_lines=10):
@@ -197,7 +193,7 @@ def check_samplesheet(file_in, file_out):
             logger.critical(f"The sample sheet **must** contain these column headers: {req_cols}.")
             sys.exit(1)
         # Validate each row.
-        checker = RowChecker()
+        checker = RowChecker(sample_col="batch", single_col=None)
         for i, row in enumerate(reader):
             try:
                 checker.validate_and_transform(row)

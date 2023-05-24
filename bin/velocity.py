@@ -1,17 +1,16 @@
 #!/usr/bin/env python
-import os
-import sys
+import argparse
 import glob
 import itertools
 import logging
-import argparse
-import pandas as pd
 import multiprocessing as mp
-
+import os
+import sys
 from gzip import open as gzopen
 from typing import Dict, List, Optional, Tuple
-from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
+import pandas as pd
+from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
 config: Dict[str, int] = {
     "LEFT_ADAPTER": 3,
@@ -87,8 +86,9 @@ def create_r2(r1: FastqGeneralIterator, r2: FastqGeneralIterator) -> Tuple[str, 
         config["LEFT_ADAPTER"] : config["LEFT_ADAPTER"] + config["POOL_BARCODE"]
     ]
 
-    barcode_seq: str = f"{pb_seq}{r2_seq}"
-    barcode_qa: str = f"{pb_qa}{r2_qa}"
+    barcode_len: int = config["POOL_BARCODE"] + config["CELL_BARCODE"] + config["UMI"]
+    barcode_seq: str = f"{pb_seq}{r2_seq}"[:barcode_len]
+    barcode_qa: str = f"{pb_qa}{r2_qa}"[:barcode_len]
 
     return barcode_seq, barcode_qa
 

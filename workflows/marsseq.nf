@@ -11,7 +11,7 @@ WorkflowMarsseq.initialise(params, log)
 
 // Check input path parameters to see if they exist
 def checkPathParamList = [ params.input, params.multiqc_config, params.fasta, params.gtf ]
-for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
+for (param in checkPathParamList) { if (param && !params.build_references) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
@@ -36,8 +36,8 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 //
 // MODULE: Local to the pipeline
 //
-include { CAT_SAMS              } from '../modules/local/cat/sam/main'
-include { QC_REPORT             } from '../modules/local/qc/report/main'
+include { CAT_CAT as MERGE_READS } from '../modules/nf-core/cat/cat/main'
+include { QC_REPORT              } from '../modules/local/qc/report/main'
 
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
@@ -74,21 +74,32 @@ def multiqc_report = []
 workflow MARSSEQ {
 
     ch_versions             = Channel.empty()
-    ch_fasta                = Channel.from(params.fasta)
-    ch_gtf                  = Channel.from(params.gtf)
-    ch_ercc_regions         = Channel.from("$projectDir/data/ercc-regions.tsv")
-    ch_oligos               = Channel.from("$projectDir/data/oligos.txt")
-    ch_spike_seq            = Channel.from("$projectDir/data/spike-seq.txt")
-    ch_spike_concentrations = Channel.from("$projectDir/data/spike-concentrations.txt")
+    ch_multiqc_files        = Channel.empty()
+    ch_fasta                = file(params.fasta, checkIfExists: true)
+    ch_gtf                  = file(params.gtf, checkIfExists: true)
+    ch_bowtie_index         = file(params.bowtie2_index, checkIfExists: true)
+    ch_star_index           = file(params.star_index, checkIfExists: true)
+    ch_ercc_regions         = Channel.fromPath("$projectDir/data/ercc-regions.tsv")
+    ch_oligos               = Channel.fromPath("$projectDir/data/oligos.txt")
+    ch_spike_seq            = Channel.fromPath("$projectDir/data/spike-seq.txt")
+    ch_spike_concentrations = Channel.fromPath("$projectDir/data/spike-concentrations.txt")
 
     //
     // SUBWORKFLOW: Read in samplesheet, validate and stage input files
     //
-    INPUT_CHECK ( ch_input )
-        .map { meta, reads -> [ meta, reads ] }
-        .set { ch_batches }
+    ch_batches = INPUT_CHECK ( ch_input ).reads
+    ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
+
+    //
+    // MODULE: Run FastQC
+    //
+    FASTQC (
+        INPUT_CHECK.out.reads
+    )
+    ch_versions = ch_versions.mix(FASTQC.out.versions)
 
     PREPARE_PIPELINE ( ch_batches, ch_gtf, ch_ercc_regions )
+    ch_versions = ch_versions.mix(PREPARE_PIPELINE.out.versions)
 
     LABEL_READS ( 
         ch_oligos, 
@@ -96,19 +107,18 @@ workflow MARSSEQ {
         PREPARE_PIPELINE.out.seq_batches, 
         PREPARE_PIPELINE.out.reads
     )
-    ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
 
-    ch_aligner_index = Channel.from(WorkflowMain.getGenomeAttribute(params, params.aligner))
-    ALIGN_READS ( ch_aligner_index, LABEL_READS.out.read, LABEL_READS.out.qc )
+    ALIGN_READS ( LABEL_READS.out.read, ch_bowtie_index, LABEL_READS.out.qc )
+    ch_versions = ch_versions.mix(ALIGN_READS.out.versions)
 
-    ch_sam = Channel.empty()
     // merge sam files into one file
-    ALIGN_READS.out.sam
+    ch_aligned_reads = ALIGN_READS.out.reads
         .map { meta, sam -> [ meta.id, sam ] }
         .groupTuple(by: [0], sort: { it.name })
-        .set { ch_sams }
+        .map { batch, sams -> [ [ "id": batch ], sams ] }
 
-    ch_sam = CAT_SAMS ( ch_sams )
+    ch_sam = MERGE_READS ( ch_aligned_reads ).file_out
+    ch_versions = ch_versions.mix(MERGE_READS.out.versions)
 
     DEMULTIPLEX_READS ( 
         ch_sam,
@@ -122,11 +132,10 @@ workflow MARSSEQ {
     )
 
     // QC report from demultiplexing
-    DEMULTIPLEX_READS.out.qc_rd.groupTuple()
-        .join(DEMULTIPLEX_READS.out.qc_pdf.groupTuple())
+    ch_qcs = DEMULTIPLEX_READS.out.qc_rd
+        .join(DEMULTIPLEX_READS.out.qc_pdf)
         .combine(PREPARE_PIPELINE.out.amp_batches)
         .combine(PREPARE_PIPELINE.out.wells_cells)
-        .set { ch_qcs }
 
     QC_REPORT ( ch_qcs )
 
@@ -134,20 +143,12 @@ workflow MARSSEQ {
     // MODULE: Velocity
     //
     if (params.velocity) {
-        VELOCITY ( PREPARE_PIPELINE.out.reads )
-        ch_versions = ch_versions.mix(VELOCITY.out.star_version.ifEmpty(null))
+        VELOCITY ( PREPARE_PIPELINE.out.reads, ch_star_index )
+        ch_versions = ch_versions.mix(VELOCITY.out.versions)
+        
+        ch_multiqc_files = ch_multiqc_files.mix(VELOCITY.out.catadapt_multiqc.collect{it[1]}.ifEmpty([]))
+        ch_multiqc_files = ch_multiqc_files.mix(VELOCITY.out.star_multiqc.collect{it[1]}.ifEmpty([]))
     }
-
-    //
-    // MODULE: Run FastQC
-    //
-    FASTQC (
-        INPUT_CHECK.out.reads
-    )
-    ch_versions = ch_versions
-        .mix(ALIGN_READS.out.aligner_version.ifEmpty(null))
-        .mix(PREPARE_PIPELINE.out.fastp_version.ifEmpty(null))
-        .mix(FASTQC.out.versions.first())
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
@@ -162,7 +163,9 @@ workflow MARSSEQ {
     methods_description    = WorkflowMarsseq.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description)
     ch_methods_description = Channel.value(methods_description)
 
-    ch_multiqc_files = Channel.empty()
+    
+    ch_multiqc_files = ch_multiqc_files.mix(PREPARE_PIPELINE.out.fastp_multiqc.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(ALIGN_READS.out.bowtie2_multiqc.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())

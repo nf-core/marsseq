@@ -17,8 +17,10 @@ nextflow.enable.dsl = 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-params.fasta   = WorkflowMain.getGenomeAttribute(params, 'fasta')
-params.gtf     = WorkflowMain.getGenomeAttribute(params, 'gtf')
+params.fasta         = WorkflowMain.getGenomeAttribute(params, 'fasta')
+params.gtf           = WorkflowMain.getGenomeAttribute(params, 'gtf')
+params.bowtie2_index = WorkflowMain.getGenomeAttribute(params, 'bowtie2')
+params.star_index    = WorkflowMain.getGenomeAttribute(params, 'star')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,7 +37,7 @@ WorkflowMain.initialise(workflow, params, log)
 */
 
 include { BUILD_REFERENCES } from './workflows/build_references'
-// include { MARSSEQ } from './workflows/marsseq'
+include { MARSSEQ } from './workflows/marsseq'
 
 //
 // WORKFLOW: Run main nf-core/marsseq analysis pipeline
@@ -45,7 +47,7 @@ workflow NFCORE_MARSSEQ {
     if (params.build_references) {
         BUILD_REFERENCES ()
     } else {
-        // MARSSEQ ()
+        MARSSEQ ()
     }
     
 }

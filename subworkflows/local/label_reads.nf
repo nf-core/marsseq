@@ -2,11 +2,7 @@
 // Extract tags from reads and move them from R2 to R1
 //
 
-def modules = params.modules.clone()
-params.options = [:]
-
-include { EXTRACT_LABELS } from '../../modules/local/extract/main' addParams( options: modules['extract_labels'] )
-
+include { EXTRACT_LABELS } from '../../modules/local/extract/main'
 
 workflow LABEL_READS {
     take:
@@ -16,17 +12,12 @@ workflow LABEL_READS {
     fastp_reads // channel: [ val(meta), [ reads ] ]
 
     main:
-
-    fastp_reads
+    ch_reads = fastp_reads
         .map { meta, reads -> return [ meta, reads.sort().collate(2) ] }
         .transpose()
-        .set { ch_reads }
-
-    ch_reads
         .combine(oligos)
         .combine(amp_batches)
         .combine(seq_batches)
-        .set { ch_reads }
 
     EXTRACT_LABELS ( ch_reads )
 
