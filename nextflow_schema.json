@@ -5,6 +5,19 @@
     "description": "MARS-seq 1/2 preprocessing pipeline",
     "type": "object",
     "definitions": {
+        "skip_steps": {
+            "title": "Skip steps",
+            "type": "object",
+            "description": "Skip analysis steps",
+            "default": "",
+            "properties": {
+                "skip_qc": {
+                    "type": "boolean",
+                    "description": "Skip QC steps"
+                }
+            },
+            "fa_icon": "fas fa-fast-forward"
+        },
         "input_output_options": {
             "title": "Input/output options",
             "type": "object",
@@ -39,6 +52,18 @@
                     "type": "string",
                     "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
+                },
+                "build_references": {
+                    "type": "boolean",
+                    "fa_icon": "far fa-file-code",
+                    "description": "Specifies which analysis type for the pipeline - either build references or analyse data"
+                },
+                "genomes_base": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Directory for Genomes references.",
+                    "fa_icon": "fas fa-cloud-download-alt",
+                    "hidden": true
                 }
             }
         },
@@ -53,7 +78,7 @@
                     "description": "Name of Genomes reference.",
                     "default": "mm10",
                     "fa_icon": "fas fa-book",
-                    "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
+                    "help_text": "Currently supported mouse: `mm9`, `mm10` and human `GRCh38`. The references are downloaded from [GENCODE](https://www.gencodegenes.org) database."
                 },
                 "fasta": {
                     "type": "string",
@@ -61,7 +86,7 @@
                     "mimetype": "text/plain",
                     "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
                     "description": "Path to FASTA genome file.",
-                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified",
                     "fa_icon": "far fa-file-code"
                 },
                 "gtf": {
@@ -73,12 +98,21 @@
                     "fa_icon": "fas fa-code-branch",
                     "help_text": "This parameter is *mandatory* if `--genome` is not specified."
                 },
-                "genomes_base": {
+                "bowtie2_index": {
                     "type": "string",
-                    "format": "directory-path",
-                    "description": "Directory for Genomes references.",
-                    "fa_icon": "fas fa-cloud-download-alt",
-                    "hidden": true
+                    "format": "file-path",
+                    "mimetype": "text/plain",
+                    "description": "Path to BOWTIE2 index.",
+                    "fa_icon": "fas fa-code-branch",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified."
+                },
+                "star_index": {
+                    "type": "string",
+                    "format": "file-path",
+                    "mimetype": "text/plain",
+                    "description": "Path to STAR index.",
+                    "fa_icon": "fas fa-code-branch",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified."
                 }
             }
         },
@@ -93,10 +127,7 @@
                     "default": "aligner",
                     "description": "Specifies the alignment algorithm based on 'release' automatically - available options are 'bowtie2' and 'hisat2'.",
                     "fa_icon": "fas fa-map-signs",
-                    "enum": [
-                        "bowtie2",
-                        "hisat2"
-                    ]
+                    "enum": ["bowtie2"]
                 }
             }
         },
@@ -208,17 +239,6 @@
             "description": "Less common options for the pipeline, typically set in a config file.",
             "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
             "properties": {
-                "release": {
-                    "type": "integer",
-                    "description": "MARS-seq version",
-                    "fa_icon": "fas fa-code-branch",
-                    "default": 2,
-                    "hidden": false,
-                    "enum": [
-                        1,
-                        2
-                    ]
-                },
                 "help": {
                     "type": "boolean",
                     "description": "Display help text.",
@@ -317,6 +337,9 @@
         }
     },
     "allOf": [
+        {
+            "$ref": "#/definitions/skip_steps"
+        },
         {
             "$ref": "#/definitions/input_output_options"
         },

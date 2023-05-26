@@ -24,18 +24,23 @@ We do so by converting the raw reads into 10X v2 format. For more information pl
 > to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline)
 > with `-profile test` before running the workflow on actual data.
 
-To run the pipeline you have create experiment metadata files (`seq_batch.xls`, `wells_cells.xls`, `amp_batches.xls`) and samplesheet (`samplesheet.csv`). We provide test example [here](...).
+To run the pipeline you have create experiment metadata files:
 
-You can download the Excel templates files [here](...).
+- [amp_batches.xlsx](assets/amp_batches.xlsx)
+- [wells_cells.xlsx](assets/wells_cells.xlsx)
+- [seq_batches.xslx](assets/seq_batches.xlsx)
 
-Next, you have to generate genome references to incorporate ERCC spike-ins. References are downloaded from
-[GENCODE](https://www.gencodegenes.org) database.
+and samplesheet (`samplesheet.csv`). We provide test example [here](assets/samplesheet.csv).
+
+Next, you have to generate genome references to incorporate ERCC spike-ins. References are downloaded from [GENCODE](https://www.gencodegenes.org) database.
 
 ```bash
 nextflow run nf-core/marsseq \
+   -profile <docker/singularity/.../institute> \
    --genome <mm10,mm9,GRCh38> \
    --build_references \
-   --outdir references
+   --input samplsheet.csv \
+   --outdir <OUTDIR>
 ```
 
 Now, you can run the pipeline using:
@@ -43,6 +48,7 @@ Now, you can run the pipeline using:
 ```bash
 nextflow run nf-core/marsseq \
    -profile <docker/singularity/.../institute> \
+   --genome <mm10,mm9,GRCh38> \
    --input samplesheet.csv \
    --outdir <OUTDIR>
 ```
@@ -66,8 +72,8 @@ nf-core/marsseq was originally written by [Martin Proks](https://github.com/matq
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 
-* Jose Alejandro Romero Herrera ([@joseale2310](https://github.com/joseale2310))
-* Maxime Garcia ([@maxulysse](https://github.com/maxulysse))
+- Jose Alejandro Romero Herrera ([@joseale2310](https://github.com/joseale2310))
+- Maxime Garcia ([@maxulysse](https://github.com/maxulysse))
 
 Keren-Shaul, H., Kenigsberg, E., Jaitin, D.A. et al. MARS-seq2.0: an experimental and analytical pipeline for indexed sorting combined with single-cell RNA sequencing. Nat Protoc 14, 1841–1862 (2019). https://doi.org/10.1038/s41596-019-0164-4
 
@@ -93,14 +99,3 @@ You can cite the `nf-core` publication as follows:
 > Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
 >
 > _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).
-
-```bash
-module load java/11.0.15 singularity/3.8.0 nextflow/22.10.6
-
-export NXF_OPTS='-Xms1g -Xmx4g'
-export NXF_HOME=/scratch/Brickman/pipelines/nfcore
-export NXF_TEMP=/scratch/Brickman/pipelines/tmpdir
-export NXF_SINGULARITY_CACHEDIR=/scratch/Brickman/singularity-images
-
-nextflow run . -profile ku_sund_dangpu --genome mm10 --build_references --outdir ./references --input /home/fdb589/projects/people/fdb589/projects/proks_et_al_2022/pipeline/SB26/design.csv
-```

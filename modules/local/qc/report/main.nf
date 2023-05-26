@@ -18,6 +18,9 @@ process QC_REPORT {
     path("amp_batches_stats.txt")  , emit: amp_batches_stats
     path("output/QC_reports*")     , emit: pdf
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     """
     mkdir -p output/QC_reports

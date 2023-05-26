@@ -87,7 +87,7 @@ workflow MARSSEQ {
     //
     // SUBWORKFLOW: Read in samplesheet, validate and stage input files
     //
-    ch_batches = INPUT_CHECK ( ch_input ).reads
+    INPUT_CHECK ( ch_input )
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
 
     //
@@ -98,7 +98,7 @@ workflow MARSSEQ {
     )
     ch_versions = ch_versions.mix(FASTQC.out.versions)
 
-    PREPARE_PIPELINE ( ch_batches, ch_gtf, ch_ercc_regions )
+    PREPARE_PIPELINE ( INPUT_CHECK.out.reads, ch_gtf, ch_ercc_regions )
     ch_versions = ch_versions.mix(PREPARE_PIPELINE.out.versions)
 
     LABEL_READS ( 
@@ -117,11 +117,12 @@ workflow MARSSEQ {
         .groupTuple(by: [0], sort: { it.name })
         .map { batch, sams -> [ [ "id": batch ], sams ] }
 
-    ch_sam = MERGE_READS ( ch_aligned_reads ).file_out
+    // merged aligned SAM files
+    MERGE_READS ( ch_aligned_reads )
     ch_versions = ch_versions.mix(MERGE_READS.out.versions)
 
     DEMULTIPLEX_READS ( 
-        ch_sam,
+        MERGE_READS.out.file_out,
         PREPARE_PIPELINE.out.amp_batches,
         PREPARE_PIPELINE.out.seq_batches,
         PREPARE_PIPELINE.out.wells_cells,

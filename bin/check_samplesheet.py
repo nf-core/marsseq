@@ -24,12 +24,7 @@ class RowChecker:
 
     """
 
-    VALID_FORMATS = (
-        ".fq.gz",
-        ".fastq.gz",
-        ".xls",
-        ".xlsx"
-    )
+    VALID_FORMATS = (".fq.gz", ".fastq.gz", ".xls", ".xlsx")
 
     def __init__(
         self,
@@ -183,7 +178,7 @@ def check_samplesheet(file_in, file_out):
         https://raw.githubusercontent.com/nf-core/test-datasets/marsseq/samplesheet/samplesheet_test.csv
 
     """
-    required_columns = {"batch", "fastq_1", "fastq_2", "amp_batches", "seq_batches", "well_cells" }
+    required_columns = {"batch", "fastq_1", "fastq_2", "amp_batches", "seq_batches", "well_cells"}
     # See https://docs.python.org/3.9/library/csv.html#id3 to read up on `newline=""`.
     with file_in.open(newline="") as in_handle:
         reader = csv.DictReader(in_handle, dialect=sniff_format(in_handle))

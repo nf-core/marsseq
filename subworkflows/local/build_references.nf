@@ -15,8 +15,9 @@ include { STAR_GENOMEGENERATE         } from '../../modules/nf-core/star/genomeg
 workflow BUILD_REFERENCES {
 
     main:
+    ch_star_index = Channel.empty()
+    ch_versions   = Channel.empty()
     params.genomes_base = params.genomes_base ? "${params.outdir}/references/" : params.genomes_base
-    ch_versions = Channel.empty()
 
     // download references
     fasta = params.genomes[params.genome].fasta.split('/')[-1]
@@ -33,26 +34,24 @@ workflow BUILD_REFERENCES {
     ch_versions = ch_versions.mix(DOWNLOAD_GTF.out.versions)
     
     // uncompress
-    ch_fasta = GUNZIP_FASTA ( DOWNLOAD_FASTA.out.file )
-        .gunzip
-        .map { meta, fasta -> fasta }
+    ch_fasta = GUNZIP_FASTA ( DOWNLOAD_FASTA.out.file ).gunzip.map { it[1] }
     ch_versions = ch_versions.mix(GUNZIP_FASTA.out.versions)
 
-    ch_gtf = GUNZIP_GTF ( DOWNLOAD_GTF.out.file ).gunzip
+    ch_gtf = GUNZIP_GTF ( DOWNLOAD_GTF.out.file ).gunzip.map { it[1] }
     ch_versions = ch_versions.mix(GUNZIP_GTF.out.versions)
 
     // create ERCC FASTA
-    ch_ercc = ERCC_CREATE( Channel.from("$projectDir/data/spike-seq.txt") ).fasta
+    ERCC_CREATE( Channel.from("$projectDir/data/spike-seq.txt") )
     ch_versions = ch_versions.mix(ERCC_CREATE.out.versions)
 
-    ch_fastas = ch_fasta.merge(ch_ercc)
+    ch_fastas = ch_fasta.merge(ERCC_CREATE.out.fasta)
         .map{ it -> [ ["id": "${fasta - '.fa'}"], it ] }
 
     ch_genome = CAT_FASTA ( ch_fastas ).file_out
     ch_versions = ch_versions.mix(CAT_FASTA.out.versions)
 
     // build bowtie2 index
-    ch_bowtie2_index = BOWTIE2_BUILD( ch_genome ).index
+    BOWTIE2_BUILD( ch_genome )
     ch_versions = ch_versions.mix(BOWTIE2_BUILD.out.versions)
 
     // build STAR index for velocity
@@ -64,7 +63,7 @@ workflow BUILD_REFERENCES {
     emit:
     fasta         = ch_fasta
     gtf           = ch_gtf
-    bowtie2_index = ch_bowtie2_index
+    bowtie2_index = BOWTIE2_BUILD.out.index
     star_index    = ch_star_index
     versions      = ch_versions
 
