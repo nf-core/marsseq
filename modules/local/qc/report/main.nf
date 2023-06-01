@@ -11,7 +11,10 @@ process QC_REPORT {
         'quay.io/biocontainers/mulled-v2-520de0c6650803e8b1dab89be11109011a0418b0:464283c471792ace52fbd7b1eea34a42ec86ac81-0' }"
 
     input:
-    tuple val(meta), path(rds), path(pdf), path(amp_batches), path(wells_cells)
+    tuple val(meta), path(rds)
+    tuple val(meta), path(pdf)
+    path(amp_batches)
+    path(wells_cells)
 
     output:
     path("amp_batches_summary.txt"), emit: amp_batches_summary

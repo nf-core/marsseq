@@ -132,13 +132,12 @@ workflow MARSSEQ {
         ch_oligos
     )
 
-    // QC report from demultiplexing
-    ch_qcs = DEMULTIPLEX_READS.out.qc_rd
-        .join(DEMULTIPLEX_READS.out.qc_pdf)
-        .combine(PREPARE_PIPELINE.out.amp_batches)
-        .combine(PREPARE_PIPELINE.out.wells_cells)
-
-    QC_REPORT ( ch_qcs )
+    QC_REPORT ( 
+        DEMULTIPLEX_READS.out.qc_rd.map { meta, rds -> [ ["id": meta.id], rds ] }.groupTuple(),
+        DEMULTIPLEX_READS.out.qc_pdf.map { meta, pdf -> [ ["id": meta.id], pdf ] }.groupTuple(),
+        PREPARE_PIPELINE.out.amp_batches,
+        PREPARE_PIPELINE.out.wells_cells
+    )
 
     //
     // MODULE: Velocity
