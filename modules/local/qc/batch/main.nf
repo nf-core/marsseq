@@ -32,4 +32,11 @@ process QC_BATCH {
         $spike_concentrations \\
         $folder
     """
+
+    stub:
+    """
+    mkdir report_per_amp_batch/ rd/
+    touch report_per_amp_batch/${meta.amp_batch}.pdf
+    touch rd/${meta.amp_batch}.rd
+    """
 }

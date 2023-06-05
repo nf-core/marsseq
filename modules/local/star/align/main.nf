@@ -40,4 +40,22 @@ process STAR_ALIGN {
         star: \$(STAR --version | sed -e "s/STAR_//g")
     END_VERSIONS
     """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch Aligned.unsort.out.bam
+    mkdir Solo.out
+    touch Log.final.out
+    touch Log.out
+    touch Log.progress.out
+    touch SJ.out.tab
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        star: \$(STAR --version | sed -e "s/STAR_//g")
+        samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
+        gawk: \$(echo \$(gawk --version 2>&1) | sed 's/^.*GNU Awk //; s/, .*\$//')
+    END_VERSIONS
+    """
 }

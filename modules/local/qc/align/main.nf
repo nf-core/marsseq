@@ -15,7 +15,7 @@ process QC_ALIGNED {
     path(labeled_qc)
     
     output:
-    path ("*.txt"), emit: qc
+    path ("_*.txt"), emit: qc
 
     when:
     task.ext.when == null || task.ext.when
@@ -26,5 +26,10 @@ process QC_ALIGNED {
     qc_align.r \\
         $sam \\
         $labeled_qc
+    """
+
+    stub:
+    """
+    touch _${labeled_qc.baseName}.txt
     """
 }

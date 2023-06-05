@@ -26,4 +26,9 @@ process VELOCITY_WHITELIST {
         --amp_batches $meta.amp_batches \\
         --well_cells $meta.well_cells
     """
+
+    stub:
+    """
+    touch whitelist.txt
+    """
 }

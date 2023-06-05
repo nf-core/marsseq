@@ -19,7 +19,7 @@ workflow PREPARE_PIPELINE {
     PREPARE ( batches, gtf, ercc_regions )
 
     // split fastq reads by predefined number of reads per fastq file
-    ch_reads = FASTP_SPLIT ( PREPARE.out.reads ).reads
+    ch_reads = FASTP_SPLIT ( batches ).reads
 
     // verify that split was performed correctly
     // R1 and R2 should always have a same pair

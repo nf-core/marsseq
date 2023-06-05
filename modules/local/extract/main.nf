@@ -41,4 +41,14 @@ process EXTRACT_LABELS {
         labeled_reads/$qc \\
         . 
     """
+
+    stub:
+    def args = task.ext.args ?: ''
+    def r1 = reads[0].baseName - '.gz'
+    def qc = r1 - '.fastq' + '.txt'
+    """
+    mkdir labeled_reads
+    touch labeled_reads/${r1}
+    touch labeled_reads/${qc}
+    """
 }

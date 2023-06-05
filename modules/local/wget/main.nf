@@ -32,4 +32,19 @@ process WGET {
         wget: \$(echo wget -V 2>&1 | grep "GNU Wget" | cut -d" " -f3 > versions.yml)
     END_VERSIONS
     """
+
+    stub:
+    def args = task.ext.args ?: ""
+    // NOTE: get last extension, will fail for ther cases like tar.gz
+    extension = url.split("\\.")[-1]
+    outfile = "${filename}.${extension}"
+    meta = [ "id": "$outfile" ]
+    """
+    touch ${outfile}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        wget: \$(echo wget -V 2>&1 | grep "GNU Wget" | cut -d" " -f3 > versions.yml)
+    END_VERSIONS
+    """
 }

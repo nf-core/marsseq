@@ -27,4 +27,10 @@ process ERCC_CREATE {
         ERCC_CREATE: \$( create_ercc_fasta.py --version )
     END_VERSIONS
     """
+
+    stub:
+    """
+    touch ercc.fa
+    touch versions.yml
+    """
 }

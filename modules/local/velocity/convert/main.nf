@@ -29,4 +29,9 @@ process VELOCITY_CONVERT {
     for f in _temp/*R1*.fastq.gz; do cat \$f >> Undetermined_S0_R1_001.fastq.gz; done
     for f in _temp/*R2*.fastq.gz; do cat \$f >> Undetermined_S0_R2_001.fastq.gz; done
     """
+
+    stub:
+    """
+    touch Undetermined_S0_R{1,2}_001.fastq.gz
+    """
 }

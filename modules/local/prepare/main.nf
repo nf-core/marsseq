@@ -26,7 +26,6 @@ process PREPARE {
     path "gene_intervals.txt"   , emit: gene_intervals
     path "seq_batches.txt"      , emit: seq_batches
     path "wells_cells.txt"      , emit: wells_cells
-    tuple val(meta), path(reads), emit: reads
 
     when:
     task.ext.when == null || task.ext.when
@@ -42,5 +41,33 @@ process PREPARE {
         --output .
     cat $ercc_regions >> gene_intervals.txt
     validate_data.py --input .
+    """
+
+    stub:
+    """
+    cat <<AMP_BATCH > amp_batches.txt
+    Amp_batch_ID\tSeq_batch_ID\tPool_barcode\tSpike_type\tSpike_dilution\tSpike_volume_ul\tExperiment_ID\tOwner\tDescription
+    AB339\tSB26\tTGAT\tERCC_mix1\t2.5e-05\t0.01\tTECH_ES\tHadas\tES#7_poolA
+    AMP_BATCH
+
+    cat <<SEQ_BATCHES > seq_batches.txt
+    Seq_batch_ID\tRun_name\tDate\tR1_design\tI5_design\tR2_design\tNotes
+    SB26\tsc_v3_Hadas_Diego_05042015\t150405\t5I.4P.51M\t7W.8R\t\tmm10
+    SEQ_BATCHES
+
+    cat <<WELLS_CELLS > wells_cells.txt
+    Well_ID\tWell_coordinates\tplate_ID\tSubject_ID\tAmp_batch_ID\tCell_barcode\tNumber_of_cells
+    TW1\tA1\t154\t35\tAB339\tCTATTCG\t1
+    WELLS_CELLS
+
+    cat <<GENE_INTERVALS > gene_intervals.txt
+    chrom\tstart\tend\tstrand\tgene_name
+    chr1\t3143476\t3144545\t1\t4933401J01Rik
+    GENE_INTERVALS
+    
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bowtie2: \$(echo \$(bowtie2 --version 2>&1) | sed 's/^.*bowtie2-align-s version //; s/ .*\$//')
+    END_VERSIONS
     """
 }

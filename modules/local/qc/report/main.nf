@@ -35,4 +35,12 @@ process QC_REPORT {
         $amp_batches \\
         . 
     """
+
+    stub:
+    """
+    touch amp_batches_summary.txt
+    touch amp_batches_stats.txt
+    mkdir -p output/QC_reports/
+    touch output/QC_reports/qc_${meta.id}.pdf
+    """
 }

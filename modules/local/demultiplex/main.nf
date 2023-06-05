@@ -62,4 +62,22 @@ process DEMULTIPLEX {
     mv _debug output/
     ln -s output output_tmp
     """
+
+    stub:
+    """
+    mkdir -p output/umi.tab/
+    mkdir -p output/offset.tab/
+    mkdir -p output/singleton_offset.tab/
+    mkdir -p output/QC/{read_stats,read_stats_amp_batch,umi_stats,noffsets_per_umi_distrib,nreads_per_umi_distrib,umi_nuc_per_pos}
+    
+    touch output/umi.tab/${meta.amp_batch}.txt
+    touch output/offset.tab/${meta.amp_batch}.txt
+    touch output/singleton_offset.tab/${meta.amp_batch}.txt
+    touch output/QC/{read_stats,read_stats_amp_batch,umi_stats,noffsets_per_umi_distrib,nreads_per_umi_distrib,umi_nuc_per_pos}/${meta.amp_batch}.txt
+
+    mkdir -p output/_debug/${meta.amp_batch}/
+    touch output/_debug/${meta.amp_batch}/{offsets,UMIs}.txt
+
+    ln -s output output_tmp
+    """
 }

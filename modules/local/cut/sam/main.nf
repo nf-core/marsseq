@@ -24,4 +24,10 @@ process CUT_SAM {
     """
     cut -f1-9,12- $read > $filename
     """
+
+    stub:
+    def filename = read.baseName + '.trimmed.sam'
+    """
+    touch ${filename}
+    """
 }

@@ -48,4 +48,18 @@ process FASTP_SPLIT {
         fastp: \$(fastp --version 2>&1 | sed -e "s/fastp //g")
     END_VERSIONS
     """
+
+    stub:
+    """
+    touch ${meta.id}.fastp.json
+    mkdir raw_reads/
+    touch raw_reads/000{1..3}.${reads[0]}
+    touch raw_reads/000{1..3}.${reads[1]}
+    touch raw_reads/${meta.id}.fastp.log
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        fastp: \$(fastp --version 2>&1 | sed -e "s/fastp //g")
+    END_VERSIONS
+    """
 }
