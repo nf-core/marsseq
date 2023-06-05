@@ -7,7 +7,7 @@
                 "nf-core": {
                     "bowtie2/align": {
                         "branch": "master",
-                        "git_sha": "603ecbd9f45300c9788f197d2a15a005685b4220",
+                        "git_sha": "fe54581f8bed20e4c4a51c616c93fd3379d89820",
                         "installed_by": ["modules"]
                     },
                     "bowtie2/build": {
@@ -27,7 +27,7 @@
                     },
                     "cutadapt": {
                         "branch": "master",
-                        "git_sha": "911696ea0b62df80e900ef244d7867d177971f73",
+                        "git_sha": "0efbaeb95c58da5a1096c99b5e919bc0c99cc952",
                         "installed_by": ["modules"]
                     },
                     "fastqc": {
