@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Launch workflow using Tower CLI tool action
-      - name: Launch workflow via tower
+      - name: Launch build-reference workflow via tower
         uses: seqeralabs/action-tower-launch@v1
         with:
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
@@ -20,7 +20,30 @@ jobs:
           workdir: s3://${{ secrets.AWS_S3_BUCKET }}/work/marsseq/work-${{ github.sha }}
           parameters: |
             {
-              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-test-${{ github.sha }}"
+              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-test-${{ github.sha }}",
+              "stub": true,
+              "build_references": true,
+              "velocity": true
+            }
+          profiles: test,aws_tower
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Tower debug log file
+          path: tower_action_*.log
+      
+      - name: Launch execution workflow via tower
+        uses: seqeralabs/action-tower-launch@v1
+        with:
+          workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
+          access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+          compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
+          workdir: s3://${{ secrets.AWS_S3_BUCKET }}/work/marsseq/work-${{ github.sha }}
+          parameters: |
+            {
+              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-test-${{ github.sha }}",
+              "genomes_base": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-test-${{ github.sha }}/references",
+              "stub": true,
+              "velocity": true
             }
           profiles: test,aws_tower
       - uses: actions/upload-artifact@v3
