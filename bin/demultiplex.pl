@@ -151,6 +151,7 @@ my $nreads_per_umi_fn =
 # }
 
 my $fdr = 0.25;
+
 # if ( exists $config_hash{"fdr_offset_err"} ) {
 #     $fdr = $config_hash{"fdr_offset_err"};
 # }
@@ -195,7 +196,7 @@ sub fdr_thresh {
     my @pvalues = @{ $_[0] };
 
     my @sorted_pvalues = sort { $a <=> $b } @pvalues;
-    my $n = ( $#sorted_pvalues + 1 );
+    my $n              = ( $#sorted_pvalues + 1 );
     for ( my $j = ( $#sorted_pvalues + 1 ) ; $j >= 1 ; $j-- ) {
 
         if ( $sorted_pvalues[ $j - 1 ] <= ( $fdr * $j / $n ) ) {
@@ -238,7 +239,7 @@ sub gammln {
         24.01409824083091,   -1.231739572450155,
         0.12086509738661e-2, -0.5395239384953e-5
     );
-    my $y = my $x = $xx;
+    my $y   = my $x = $xx;
     my $tmp = $x + 5.5;
     $tmp -= ( $x + .5 ) * log($tmp);
     my $ser = 1.000000000190015;
@@ -781,9 +782,9 @@ while (<DATA>) {
         next;
     }
 
-    my $cur_pool_quality = $parsed_header[ $#parsed_header - 5 ];
+    my $cur_pool_quality              = $parsed_header[ $#parsed_header - 5 ];
     my $n_bad_poolbarcode_quality_bps = 0;
-    my @cur_poolbarcode_arr = split( //, $cur_pool_quality );
+    my @cur_poolbarcode_arr           = split( //, $cur_pool_quality );
 
     for ( my $qi = 0 ; $qi < $#cur_poolbarcode_arr ; $qi++ ) {
         my $bp_qual = ( 0 + $quality_hash{ $cur_poolbarcode_arr[$qi] } );
@@ -813,7 +814,7 @@ while (<DATA>) {
     my $well_id;
 
     #	my $well_barcode_min_bp_quality=1000;
-    my $n_bad_quality_bps = 0;
+    my $n_bad_quality_bps   = 0;
     my @cur_wellbarcode_arr = split( //, $cur_wellbarcode_quality );
 
     for ( my $qi = 0 ; $qi < $#cur_wellbarcode_arr ; $qi++ ) {
@@ -884,7 +885,7 @@ while (<DATA>) {
     my $chr  = $parsed_line[2];
     my $coor = $parsed_line[3];
     my $gene =
-        map_to_gene( $chr, $coor, $strand, \%binned_coordinate_to_gene_hash );
+      map_to_gene( $chr, $coor, $strand, \%binned_coordinate_to_gene_hash );
 
     if ( $gene eq "" ) {
         $read_counter{$well_id}->{"mapped_to_nongenic"}++;
@@ -903,6 +904,7 @@ while (<DATA>) {
 }
 print "Read " . ( int( $ii / $downsampling_factor ) ) . " reads\n";
 close(DATA);
+
 # }
 
 print "Finished reading sam files\n";
@@ -1226,7 +1228,7 @@ print OUT_DEBUG_UMIS
   "well_id\tgene\tumi\tis_spike\tstatus\tnreads\tn_offsets\n";
 for ( my $i = 0 ; $i <= $#umis ; $i++ ) {
     my $is_spike = 0;
-    my @arr = split( "\t", $umis[$i] );
+    my @arr      = split( "\t", $umis[$i] );
     if ( exists $spike_ins{ $arr[1] } ) {
         $is_spike = 1;
     }

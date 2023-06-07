@@ -151,7 +151,7 @@ def convert(fastqs_folder: str, output_folder: str, threads: int):
 
 def whitelist(batch: str, amp_batches: str, well_cells: str):
     """Generate whitelist for StarSolo.
-       The file should contain cell tags.
+    The file should contain cell tags.
 
     Args:
         batch (str): batch name
