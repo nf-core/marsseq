@@ -6,7 +6,8 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+nf-core/marsseq is a pre-processing pipeline for MARS-seq experiments. We additionally introduce RNA velocity workflow that can be used to study
+cell dynamics along differentiation.
 
 ## Samplesheet input
 
