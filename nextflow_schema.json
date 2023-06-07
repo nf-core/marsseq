@@ -116,21 +116,6 @@
                 }
             }
         },
-        "alignment_options": {
-            "title": "Alignment options",
-            "type": "object",
-            "fa_icon": "fas fa-map-signs",
-            "description": "Options to adjust parameters and filtering criteria for read alignments.",
-            "properties": {
-                "aligner": {
-                    "type": "string",
-                    "default": "aligner",
-                    "description": "Specifies the alignment algorithm based on 'release' automatically - available options are 'bowtie2' and 'hisat2'.",
-                    "fa_icon": "fas fa-map-signs",
-                    "enum": ["bowtie2"]
-                }
-            }
-        },
         "rna_velocity": {
             "title": "RNA velocity",
             "type": "object",
@@ -345,6 +330,9 @@
         },
         {
             "$ref": "#/definitions/reference_genome_options"
+        },
+        {
+            "$ref": "#/definitions/rna_velocity"
         },
         {
             "$ref": "#/definitions/institutional_config_options"

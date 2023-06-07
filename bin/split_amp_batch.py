@@ -53,10 +53,9 @@ def filter_reads(
     with gzopen(fastq_r1, "rt") as fq_r1, gzopen(fastq_r2, "rt") as fq_r2, gzopen(
         f"{output_folder}/{amp_batch}_R1.fastq.gz", "wt"
     ) as fastq_r1_out, gzopen(f"{output_folder}/{amp_batch}_R2.fastq.gz", "wt") as fastq_r2_out:
-
         counter: int = 0
         fastq_r1_content, fastq_r2_content = "", ""
-        for (r1, r2) in tzip(FastqGeneralIterator(fq_r1), FastqGeneralIterator(fq_r2)):
+        for r1, r2 in tzip(FastqGeneralIterator(fq_r1), FastqGeneralIterator(fq_r2)):
             # [0]: header, [1]: seq, [2]: quality
 
             if pool_barcode in r1[1]:
