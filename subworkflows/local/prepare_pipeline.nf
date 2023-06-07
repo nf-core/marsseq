@@ -1,5 +1,5 @@
 //
-// Subworkflow for setting up all necessary files 
+// Subworkflow for setting up all necessary files
 // before running the pipeline
 //
 

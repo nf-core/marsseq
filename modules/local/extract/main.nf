@@ -13,7 +13,7 @@ process EXTRACT_LABELS {
 
     input:
     tuple val(meta), path(reads), path(oligos), path(amp_batches), path(seq_batches)
-    
+
     output:
     tuple val(meta), path("labeled_reads/*.fastq"), emit: labeled_read
     path "labeled_reads/*.txt"                    , emit: qc
@@ -39,7 +39,7 @@ process EXTRACT_LABELS {
         $amp_batches \\
         labeled_reads/$r1 \\
         labeled_reads/$qc \\
-        . 
+        .
     """
 
     stub:

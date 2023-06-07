@@ -34,7 +34,7 @@ process STAR_ALIGN {
         --readFilesCommand zcat \\
         --soloCBwhitelist $whitelist \\
         $args
-    
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         star: \$(STAR --version | sed -e "s/STAR_//g")

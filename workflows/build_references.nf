@@ -33,14 +33,14 @@ workflow BUILD_REFERENCES {
     // download references
     fasta = params.genomes[params.genome].fasta.split('/')[-1]
     DOWNLOAD_FASTA (
-        params.genomes[params.genome].fasta_url, 
+        params.genomes[params.genome].fasta_url,
         "_" + fasta
     )
     DOWNLOAD_GTF (
         params.genomes[params.genome].gtf_url,
         params.genomes[params.genome].gtf.split('/')[-1]
     )
-    
+
     // uncompress
     ch_fasta = GUNZIP_FASTA ( DOWNLOAD_FASTA.out.file )
         .gunzip
@@ -63,7 +63,7 @@ workflow BUILD_REFERENCES {
         STAR_GENOMEGENERATE( ch_genome.map{ meta, fasta -> fasta }, ch_gtf.map{ meta, gtf -> gtf } )
         ch_versions = ch_versions.mix(STAR_GENOMEGENERATE.out.versions)
     }
-    
+
     // gather versions
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions

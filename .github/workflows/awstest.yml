@@ -30,7 +30,7 @@ jobs:
         with:
           name: Tower debug log file
           path: tower_action_*.log
-      
+
       - name: Launch execution workflow via tower
         uses: seqeralabs/action-tower-launch@v1
         with:

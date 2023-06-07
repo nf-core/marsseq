@@ -13,7 +13,7 @@ process QC_ALIGNED {
     input:
     tuple val(meta), path(sam)
     path(labeled_qc)
-    
+
     output:
     path ("_*.txt"), emit: qc
 

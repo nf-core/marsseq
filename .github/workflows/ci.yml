@@ -39,7 +39,7 @@ jobs:
         run: |
           nextflow run ${GITHUB_WORKSPACE} -profile test,docker -stub \
             --build_references --velocity --outdir ./results
-      
+
       - name: Dry test pipeline
         run: |
           nextflow run ${GITHUB_WORKSPACE} -profile test,docker -stub \

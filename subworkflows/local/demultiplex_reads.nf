@@ -21,8 +21,8 @@ workflow DEMULTIPLEX_READS {
         .splitCsv( header:true, sep:'\t' )
         .map { row -> [ row['Amp_batch_ID'], row['Pool_barcode'] ] }
         .combine(reads)
-        .map { amp_batch, pool_barcode, meta, reads -> [ 
-            [ "id": meta.id, "amp_batch": amp_batch, "pool_barcode": pool_barcode ], reads ] 
+        .map { amp_batch, pool_barcode, meta, reads -> [
+            [ "id": meta.id, "amp_batch": amp_batch, "pool_barcode": pool_barcode ], reads ]
         }
         .combine(wells_cells)
         .combine(gene_intervals)

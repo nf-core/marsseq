@@ -128,7 +128,7 @@
                     "description": "Run RNA velocity"
                 },
                 "read_length": {
-                    "type": "string",
+                    "type": "integer",
                     "fa_icon": "fas fa-ruler",
                     "description": "Read length required for STAR aligner"
                 }

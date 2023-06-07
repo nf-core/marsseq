@@ -31,7 +31,7 @@ def create_fastq_channel(LinkedHashMap row) {
     if (!file(row.fastq_1).exists()) {
         exit 1, "ERROR: Please check input samplesheet -> Read 1 FastQ file does not exist!\n${row.fastq_1}"
     }
-    
+
     if (!file(row.fastq_2).exists()) {
         exit 1, "ERROR: Please check input samplesheet -> Read 2 FastQ file does not exist!\n${row.fastq_2}"
     }
@@ -48,9 +48,9 @@ def create_fastq_channel(LinkedHashMap row) {
         exit 1, "ERROR: well_cells file does not exist!"
     }
 
-    meta.amp_batches = file(row.amp_batches)
-    meta.seq_batches = file(row.seq_batches)
-    meta.well_cells = file(row.well_cells)
+    meta.amp_batches = row.amp_batches
+    meta.seq_batches = row.seq_batches
+    meta.well_cells = row.well_cells
 
     return [ meta, [ file(row.fastq_1), file(row.fastq_2) ] ]
 }

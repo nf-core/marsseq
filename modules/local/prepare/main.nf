@@ -11,7 +11,7 @@ process PREPARE {
     tag "$meta.id"
     label 'process_tiny'
 
-    conda "bioconda::openpyxl==2.6.1 conda-forge::pandas==1.2.4"
+    conda "bioconda::openpyxl==2.6.1 conda-forge::pandas==1.2.4 conda-forge::fsspec==2023.5.0"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/mulled-v2-0bcca2890a3ab7be29a83e813a02d340d6f54660:4cb478c6e57df2ef85ea5f8eae6d717c017962cd-0' :
         'quay.io/biocontainers/mulled-v2-0bcca2890a3ab7be29a83e813a02d340d6f54660:4cb478c6e57df2ef85ea5f8eae6d717c017962cd-0' }"
@@ -20,7 +20,7 @@ process PREPARE {
     tuple val(meta), path(reads)
     path(gtf)
     path(ercc_regions)
-    
+
     output:
     path "amp_batches.txt"      , emit: amp_batches
     path "gene_intervals.txt"   , emit: gene_intervals
@@ -64,7 +64,7 @@ process PREPARE {
     chrom\tstart\tend\tstrand\tgene_name
     chr1\t3143476\t3144545\t1\t4933401J01Rik
     GENE_INTERVALS
-    
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bowtie2: \$(echo \$(bowtie2 --version 2>&1) | sed 's/^.*bowtie2-align-s version //; s/ .*\$//')

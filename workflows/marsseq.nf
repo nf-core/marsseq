@@ -101,10 +101,10 @@ workflow MARSSEQ {
     PREPARE_PIPELINE ( INPUT_CHECK.out.reads, ch_gtf, ch_ercc_regions )
     ch_versions = ch_versions.mix(PREPARE_PIPELINE.out.versions)
 
-    LABEL_READS ( 
-        ch_oligos, 
-        PREPARE_PIPELINE.out.amp_batches, 
-        PREPARE_PIPELINE.out.seq_batches, 
+    LABEL_READS (
+        ch_oligos,
+        PREPARE_PIPELINE.out.amp_batches,
+        PREPARE_PIPELINE.out.seq_batches,
         PREPARE_PIPELINE.out.reads
     )
 
@@ -121,7 +121,7 @@ workflow MARSSEQ {
     MERGE_READS ( ch_aligned_reads )
     ch_versions = ch_versions.mix(MERGE_READS.out.versions)
 
-    DEMULTIPLEX_READS ( 
+    DEMULTIPLEX_READS (
         MERGE_READS.out.file_out,
         PREPARE_PIPELINE.out.amp_batches,
         PREPARE_PIPELINE.out.seq_batches,
@@ -132,7 +132,7 @@ workflow MARSSEQ {
         ch_oligos
     )
 
-    QC_REPORT ( 
+    QC_REPORT (
         DEMULTIPLEX_READS.out.qc_rd.map { meta, rds -> [ ["id": meta.id], rds ] }.groupTuple(),
         DEMULTIPLEX_READS.out.qc_pdf.map { meta, pdf -> [ ["id": meta.id], pdf ] }.groupTuple(),
         PREPARE_PIPELINE.out.amp_batches,
@@ -145,7 +145,7 @@ workflow MARSSEQ {
     if (params.velocity) {
         VELOCITY ( PREPARE_PIPELINE.out.reads, ch_star_index )
         ch_versions = ch_versions.mix(VELOCITY.out.versions)
-        
+
         ch_multiqc_files = ch_multiqc_files.mix(VELOCITY.out.catadapt_multiqc.collect{it[1]}.ifEmpty([]))
         ch_multiqc_files = ch_multiqc_files.mix(VELOCITY.out.star_multiqc.collect{it[1]}.ifEmpty([]))
     }
@@ -163,7 +163,7 @@ workflow MARSSEQ {
     methods_description    = WorkflowMarsseq.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description)
     ch_methods_description = Channel.value(methods_description)
 
-    
+
     ch_multiqc_files = ch_multiqc_files.mix(PREPARE_PIPELINE.out.fastp_multiqc.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ALIGN_READS.out.bowtie2_multiqc.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))

@@ -1,5 +1,5 @@
 //
-// Subworkflow for setting up all necessary files 
+// Subworkflow for setting up all necessary files
 // before running the pipeline
 //
 include { VELOCITY_CONVERT                } from '../../modules/local/velocity/convert/main'
@@ -14,7 +14,7 @@ workflow VELOCITY {
 
     main:
     ch_versions = Channel.empty()
-    
+
     ch_folder = reads.map { meta, reads -> [ meta, reads.first().Parent ] }
     ch_index = reads.map { meta, reads -> [ meta, index ] }
 
@@ -27,7 +27,7 @@ workflow VELOCITY {
     // trim poly-T and low quality reads
     VELOCITY_TRIM ( VELOCITY_CONVERT.out.reads )
     ch_versions = ch_versions.mix(VELOCITY_TRIM.out.versions)
-    
+
     // alignment using StarSolo
     VELOCITY_STARSOLO ( VELOCITY_TRIM.out.reads, index, VELOCITY_WHITELIST.out.whitelist )
     ch_versions = ch_versions.mix(VELOCITY_STARSOLO.out.versions)

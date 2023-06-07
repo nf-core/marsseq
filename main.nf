@@ -49,7 +49,7 @@ workflow NFCORE_MARSSEQ {
     } else {
         MARSSEQ ()
     }
-    
+
 }
 
 /*

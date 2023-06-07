@@ -1,6 +1,6 @@
 /*
  * Demultiplex reads using barcodes. At the same time
- * collect qc reports which will be used later to 
+ * collect qc reports which will be used later to
  * construct final QC report per batch.
  */
 process DEMULTIPLEX {
@@ -58,7 +58,7 @@ process DEMULTIPLEX {
         $read \\
         . \\
         $args
-    
+
     mv _debug output/
     ln -s output output_tmp
     """
@@ -69,7 +69,7 @@ process DEMULTIPLEX {
     mkdir -p output/offset.tab/
     mkdir -p output/singleton_offset.tab/
     mkdir -p output/QC/{read_stats,read_stats_amp_batch,umi_stats,noffsets_per_umi_distrib,nreads_per_umi_distrib,umi_nuc_per_pos}
-    
+
     touch output/umi.tab/${meta.amp_batch}.txt
     touch output/offset.tab/${meta.amp_batch}.txt
     touch output/singleton_offset.tab/${meta.amp_batch}.txt

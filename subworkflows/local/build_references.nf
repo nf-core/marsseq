@@ -22,7 +22,7 @@ workflow BUILD_REFERENCES {
     // download references
     fasta = params.genomes[params.genome].fasta.split('/')[-1]
     DOWNLOAD_FASTA (
-        params.genomes[params.genome].fasta_url, 
+        params.genomes[params.genome].fasta_url,
         "_" + fasta
     )
     ch_versions = ch_versions.mix(DOWNLOAD_FASTA.out.versions)
@@ -32,7 +32,7 @@ workflow BUILD_REFERENCES {
         params.genomes[params.genome].gtf.split('/')[-1]
     )
     ch_versions = ch_versions.mix(DOWNLOAD_GTF.out.versions)
-    
+
     // uncompress
     ch_fasta = GUNZIP_FASTA ( DOWNLOAD_FASTA.out.file ).gunzip.map { it[1] }
     ch_versions = ch_versions.mix(GUNZIP_FASTA.out.versions)
