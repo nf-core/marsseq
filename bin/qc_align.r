@@ -15,5 +15,5 @@ flag_counts = table(read.table(
 stats = read.table(read_qc, header = T)
 stats$mapped = flag_counts["0"] + flag_counts["16"]
 
-write.table(file = paste0("_", read_qc), 
+write.table(file = paste0("_", read_qc),
     stats, sep = "\t", col.names = T, row.names = F, quote = F)
