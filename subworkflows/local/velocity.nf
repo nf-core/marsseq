@@ -5,12 +5,13 @@
 include { VELOCITY_CONVERT                } from '../../modules/local/velocity/convert/main'
 include { VELOCITY_WHITELIST              } from '../../modules/local/velocity/whitelist/main'
 include { CUTADAPT as VELOCITY_TRIM       } from '../../modules/nf-core/cutadapt/main'
-include { STAR_ALIGN as VELOCITY_STARSOLO } from '../../modules/local/star/align/main'
+include { STAR_ALIGN as VELOCITY_STARSOLO } from '../../modules/nf-core/star/align/main'
 
 workflow VELOCITY {
     take:
     reads   // channel [ meta, reads ]
     index   // channel file(star index)
+    gtf     // channel file(gtf)
 
     main:
     ch_versions = Channel.empty()
@@ -31,7 +32,15 @@ workflow VELOCITY {
     ch_versions = ch_versions.mix(VELOCITY_TRIM.out.versions)
 
     // alignment using StarSolo
-    VELOCITY_STARSOLO ( VELOCITY_TRIM.out.reads, index, VELOCITY_WHITELIST.out.whitelist )
+    VELOCITY_STARSOLO (
+        VELOCITY_TRIM.out.reads,            // reads
+        index,                              // star index
+        gtf,                                // gtf annotation
+        VELOCITY_WHITELIST.out.whitelist,   // whitelist
+        true,                               // star_ignore_sjdbgtf
+        false,                              // seq_platform
+        false                               // seq_center
+    )
     ch_versions = ch_versions.mix(VELOCITY_STARSOLO.out.versions)
 
     emit:

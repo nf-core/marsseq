@@ -146,7 +146,7 @@ workflow MARSSEQ {
     // MODULE: Velocity
     //
     if (params.velocity) {
-        VELOCITY ( PREPARE_PIPELINE.out.reads, ch_star_index )
+        VELOCITY ( PREPARE_PIPELINE.out.reads, ch_star_index, ch_gtf )
         ch_versions = ch_versions.mix(VELOCITY.out.versions)
 
         ch_multiqc_files = ch_multiqc_files.mix(VELOCITY.out.catadapt_multiqc.collect{it[1]}.ifEmpty([]))
