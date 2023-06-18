@@ -23,7 +23,6 @@ jobs:
           parameters: |
             {
               "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-test-${{ github.sha }}",
-              "stub": true,
               "build_references": true,
               "velocity": true
             }
@@ -44,7 +43,6 @@ jobs:
             {
               "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-test-${{ github.sha }}",
               "genomes_base": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-test-${{ github.sha }}/references",
-              "stub": true,
               "velocity": true
             }
           profiles: test_full,aws_tower
