@@ -3,14 +3,14 @@
 // required references
 //
 
-include { WGET as DOWNLOAD_FASTA      } from '../../modules/local/wget/main'
-include { WGET as DOWNLOAD_GTF        } from '../../modules/local/wget/main'
-include { GUNZIP as GUNZIP_FASTA      } from '../../modules/nf-core/gunzip/main'
-include { GUNZIP as GUNZIP_GTF        } from '../../modules/nf-core/gunzip/main'
-include { ERCC_CREATE                 } from '../../modules/local/ercc/main'
-include { CAT_CAT as CAT_FASTA        } from '../../modules/nf-core/cat/cat/main'
-include { BOWTIE2_BUILD               } from '../../modules/nf-core/bowtie2/build/main'
-include { STAR_GENOMEGENERATE         } from '../../modules/nf-core/star/genomegenerate/main'
+include { WGET as DOWNLOAD_FASTA } from '../../modules/local/wget/main'
+include { WGET as DOWNLOAD_GTF   } from '../../modules/local/wget/main'
+include { GUNZIP as GUNZIP_FASTA } from '../../modules/nf-core/gunzip/main'
+include { GUNZIP as GUNZIP_GTF   } from '../../modules/nf-core/gunzip/main'
+include { ERCC_CREATE            } from '../../modules/local/ercc/main'
+include { CAT_CAT as CAT_FASTA   } from '../../modules/nf-core/cat/cat/main'
+include { BOWTIE2_BUILD          } from '../../modules/nf-core/bowtie2/build/main'
+include { STAR_GENOMEGENERATE    } from '../../modules/nf-core/star/genomegenerate/main'
 
 workflow BUILD_REFERENCES {
 
