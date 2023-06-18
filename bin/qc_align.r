@@ -1,7 +1,11 @@
 #!/usr/bin/env Rscript
 
 args = commandArgs(trailingOnly = TRUE)
-if (length(args) == 2) {
+
+if (length(args) == 1 && args[1] == "--version") {
+    message("v1.0")
+    quit()
+} else if (length(args) == 2) {
     read_sam = args[1]
     read_qc = args[2]
 } else {

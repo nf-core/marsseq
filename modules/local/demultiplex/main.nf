@@ -7,16 +7,17 @@ process DEMULTIPLEX {
     tag "$meta.id [$meta.amp_batch]"
     label 'process_medium'
 
-    conda "bioconda::conda-forge==5.22.2.1"
+    conda "bioconda::conda-forge==5.30.0"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/perl:5.22.2.1' :
-        'quay.io/biocontainers/perl:5.22.2.1' }"
+        'https://depot.galaxyproject.org/singularity/ubuntu:20.04' :
+        'nf-core/ubuntu:20.04' }"
 
     input:
     tuple val(meta), path(read), path(wells_cells), path(gene_intervals), path(spike_seq), path(oligos)
 
     output:
     tuple val(meta), path("output_tmp"), emit: folder
+    path "versions.yml"                , emit: versions
 
     // required so we can append the results into output folder
     path("_DS/*")                      , optional: true
@@ -61,6 +62,11 @@ process DEMULTIPLEX {
 
     mv _debug output/
     ln -s output output_tmp
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        demultiplex.pl: \$( demultiplex.pl --version )
+    END_VERSIONS
     """
 
     stub:
@@ -79,5 +85,10 @@ process DEMULTIPLEX {
     touch output/_debug/${meta.amp_batch}/{offsets,UMIs}.txt
 
     ln -s output output_tmp
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        demultiplex.pl: \$( demultiplex.pl --version )
+    END_VERSIONS
     """
 }

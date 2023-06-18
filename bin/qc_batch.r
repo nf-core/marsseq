@@ -358,7 +358,11 @@ get_stats_per_seq_batch = function(seq_batch) {
 
 args = commandArgs(trailingOnly = TRUE)
 # args=c('AB339','output')
-if (length(args) == 6) {
+
+if (length(args) == 1 && args[1] == "--version") {
+    message("v1.0")
+    quit()
+} else if (length(args) == 6) {
     amp_batch = args[1]
     wells_cells_txt = args[2]
     amp_batches_txt = args[3]
@@ -366,8 +370,7 @@ if (length(args) == 6) {
     spike_concentrations_txt = args[5]
     output_dir = args[6] # output where umi.tab and others are stored
 } else {
-    message("Usage: Rscript qc_batch.r [amp_batch] [well_cells.txt] [amp_batches.txt] [seq_batches.txt] [spike_concentrations.txt] [output_dir]")
-    stop()
+    stop("Usage: Rscript qc_batch.r [amp_batch] [well_cells.txt] [amp_batches.txt] [seq_batches.txt] [spike_concentrations.txt] [output_dir]")
 }
 
 gene_spike_col = c(colors()[132], "firebrick")

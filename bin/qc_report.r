@@ -20,7 +20,10 @@ get_stats_per_seq_batch = function(seq_batch) {
 }
 
 args = commandArgs(trailingOnly = TRUE)
-if (length(args) == 3) {
+if (length(args) == 1 && args[1] == "--version") {
+    message("v1.0")
+    quit()
+} else if (length(args) == 3) {
     well_cells_txt = args[1]
     amp_batches_txt = args[2]
     output_dir = args[3]

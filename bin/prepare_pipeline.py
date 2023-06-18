@@ -3,10 +3,10 @@
 import argparse
 import logging
 import os
-import pandas as pd
 import sys
-
 from typing import Any, Tuple
+
+import pandas as pd
 
 logging.basicConfig()
 logger = logging.getLogger()
@@ -162,7 +162,7 @@ def args() -> argparse.Namespace:
     """
     arg_parser = argparse.ArgumentParser(description="Preprocessing script for MARS-seq pipeline.")
 
-    arg_parser.add_argument("--version", "-v", action="version", version=f"v0.1")
+    arg_parser.add_argument("--version", "-v", action="version", version=f"v1.0")
     arg_parser.add_argument("--batch", action="store", type=str, required=True)
     arg_parser.add_argument("--amp_batches", action="store", type=str, required=True)
     arg_parser.add_argument("--seq_batches", action="store", type=str, required=True)

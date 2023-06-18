@@ -37,7 +37,7 @@ WorkflowMain.initialise(workflow, params, log)
 */
 
 include { BUILD_REFERENCES } from './workflows/build_references'
-include { MARSSEQ } from './workflows/marsseq'
+include { MARSSEQ          } from './workflows/marsseq'
 
 //
 // WORKFLOW: Run main nf-core/marsseq analysis pipeline

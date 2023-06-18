@@ -20,9 +20,11 @@ workflow VELOCITY {
 
     // convert fastq files into 10X format
     VELOCITY_CONVERT ( ch_folder )
+    ch_versions = ch_versions.mix(VELOCITY_CONVERT.out.versions)
 
     // build whitelist.txt
     VELOCITY_WHITELIST ( reads )
+    ch_versions = ch_versions.mix(VELOCITY_WHITELIST.out.versions)
 
     // trim poly-T and low quality reads
     VELOCITY_TRIM ( VELOCITY_CONVERT.out.reads )

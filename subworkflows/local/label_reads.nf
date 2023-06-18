@@ -22,7 +22,8 @@ workflow LABEL_READS {
     EXTRACT_LABELS ( ch_reads )
 
     emit:
-    read = EXTRACT_LABELS.out.labeled_read
-    qc   = EXTRACT_LABELS.out.qc
+    read     = EXTRACT_LABELS.out.labeled_read
+    qc       = EXTRACT_LABELS.out.qc
+    versions = EXTRACT_LABELS.out.versions
 
 }

@@ -1,6 +1,26 @@
 #!/usr/bin/env perl
 use strict;
 
+if ($#ARGV == 0 and $ARGV[0] eq "--version") {
+  print "v1.0";
+  exit;
+}
+
+if ( $#ARGV < 8 ) {
+    die(
+        "usage: extract_labels.pl \
+                R1.fastq [file] \
+                R2.fastq [file] \
+                batch [str] \
+                seq_batches [folder] \
+                oligos.txt [file] \
+                amp_batches [folder] \
+                labeled_reads/R1.fastq [str] \
+                labeled_reads/R1.qc [str] \
+                output [folder]\n"
+    );
+}
+
 my %seqs2;
 my $r1_file        = $ARGV[0];
 my $r2_file        = $ARGV[1];

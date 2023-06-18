@@ -14,7 +14,7 @@ process PREPARE {
     conda "bioconda::openpyxl==2.6.1 conda-forge::pandas==1.2.4 conda-forge::fsspec==2023.5.0"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/mulled-v2-0bcca2890a3ab7be29a83e813a02d340d6f54660:4cb478c6e57df2ef85ea5f8eae6d717c017962cd-0' :
-        'quay.io/biocontainers/mulled-v2-0bcca2890a3ab7be29a83e813a02d340d6f54660:4cb478c6e57df2ef85ea5f8eae6d717c017962cd-0' }"
+        'biocontainers/mulled-v2-0bcca2890a3ab7be29a83e813a02d340d6f54660:4cb478c6e57df2ef85ea5f8eae6d717c017962cd-0' }"
 
     input:
     tuple val(meta), path(reads)
@@ -26,6 +26,7 @@ process PREPARE {
     path "gene_intervals.txt"   , emit: gene_intervals
     path "seq_batches.txt"      , emit: seq_batches
     path "wells_cells.txt"      , emit: wells_cells
+    path "versions.yml"         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -41,6 +42,12 @@ process PREPARE {
         --output .
     cat $ercc_regions >> gene_intervals.txt
     validate_data.py --input .
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        prepare_pipeline.py: \$( prepare_pipeline.py --version )
+        validate_data.py: \$( validate_data.py --version )
+    END_VERSIONS
     """
 
     stub:
@@ -67,7 +74,8 @@ process PREPARE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        bowtie2: \$(echo \$(bowtie2 --version 2>&1) | sed 's/^.*bowtie2-align-s version //; s/ .*\$//')
+        prepare_pipeline.py: \$( prepare_pipeline.py --version )
+        validate_data.py: \$( validate_data.py --version )
     END_VERSIONS
     """
 }

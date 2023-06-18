@@ -6,10 +6,10 @@ process EXTRACT_LABELS {
     tag "$meta.id"
     label 'process_medium'
 
-    conda "bioconda::conda-forge==5.22.2.1"
+    conda "bioconda::conda-forge==5.30.0"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/perl:5.22.2.1' :
-        'quay.io/biocontainers/perl:5.22.2.1' }"
+        'https://depot.galaxyproject.org/singularity/ubuntu:20.04' :
+        'nf-core/ubuntu:20.04' }"
 
     input:
     tuple val(meta), path(reads), path(oligos), path(amp_batches), path(seq_batches)
@@ -17,6 +17,7 @@ process EXTRACT_LABELS {
     output:
     tuple val(meta), path("labeled_reads/*.fastq"), emit: labeled_read
     path "labeled_reads/*.txt"                    , emit: qc
+    path "versions.yml"                           , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -27,7 +28,7 @@ process EXTRACT_LABELS {
     def r2 = reads[1].baseName - '.gz'
     def qc = r1 - '.fastq' + '.txt'
     """
-    gunzip $reads
+    gunzip -f $reads
     mkdir labeled_reads
 
     extract_labels.pl \\
@@ -40,6 +41,11 @@ process EXTRACT_LABELS {
         labeled_reads/$r1 \\
         labeled_reads/$qc \\
         .
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        extract_labels.pl: \$( extract_labels.pl --version )
+    END_VERSIONS
     """
 
     stub:
@@ -50,5 +56,10 @@ process EXTRACT_LABELS {
     mkdir labeled_reads
     touch labeled_reads/${r1}
     touch labeled_reads/${qc}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        extract_labels.pl: \$( extract_labels.pl --version )
+    END_VERSIONS
     """
 }

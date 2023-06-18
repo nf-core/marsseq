@@ -1,6 +1,11 @@
 #!/usr/bin/env perl
 use strict;
 
+if ($#ARGV == 0 and $ARGV[0] eq "--version") {
+  print "v1.0";
+  exit;
+}
+
 if ( $#ARGV < 11 ) {
     die(
         "usage: demultiplex.pl \

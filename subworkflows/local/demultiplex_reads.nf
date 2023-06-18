@@ -17,6 +17,8 @@ workflow DEMULTIPLEX_READS {
     oligos                  // channel: oligos.txt
 
     main:
+    ch_versions = Channel.empty()
+
     amp_batch = amp_batches
         .splitCsv( header:true, sep:'\t' )
         .map { row -> [ row['Amp_batch_ID'], row['Pool_barcode'] ] }
@@ -34,10 +36,13 @@ workflow DEMULTIPLEX_READS {
         .combine(seq_batches)
         .combine(wells_cells)
         .combine(spike_concentrations)
+    ch_versions = ch_versions.mix(DEMULTIPLEX.out.versions)
 
     QC_BATCH ( ch_demultiplex )
+    ch_versions = ch_versions.mix(QC_BATCH.out.versions)
 
     emit:
-    qc_rd  = QC_BATCH.out.rd
-    qc_pdf = QC_BATCH.out.pdf
+    qc_rd    = QC_BATCH.out.rd
+    qc_pdf   = QC_BATCH.out.pdf
+    versions = ch_versions
 }

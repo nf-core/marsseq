@@ -107,6 +107,7 @@ workflow MARSSEQ {
         PREPARE_PIPELINE.out.seq_batches,
         PREPARE_PIPELINE.out.reads
     )
+    ch_versions = ch_versions.mix(LABEL_READS.out.versions)
 
     ALIGN_READS ( LABEL_READS.out.read, ch_bowtie_index, LABEL_READS.out.qc )
     ch_versions = ch_versions.mix(ALIGN_READS.out.versions)
@@ -131,6 +132,7 @@ workflow MARSSEQ {
         ch_spike_concentrations,
         ch_oligos
     )
+    ch_versions = ch_versions.mix(DEMULTIPLEX_READS.out.versions)
 
     QC_REPORT (
         DEMULTIPLEX_READS.out.qc_rd.map { meta, rds -> [ ["id": meta.id], rds ] }.groupTuple(),
@@ -138,6 +140,7 @@ workflow MARSSEQ {
         PREPARE_PIPELINE.out.amp_batches,
         PREPARE_PIPELINE.out.wells_cells
     )
+    ch_versions = ch_versions.mix(QC_REPORT.out.versions)
 
     //
     // MODULE: Velocity
@@ -163,13 +166,13 @@ workflow MARSSEQ {
     methods_description    = WorkflowMarsseq.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description)
     ch_methods_description = Channel.value(methods_description)
 
-
-    ch_multiqc_files = ch_multiqc_files.mix(PREPARE_PIPELINE.out.fastp_multiqc.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(ALIGN_READS.out.bowtie2_multiqc.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files
+        .mix(PREPARE_PIPELINE.out.fastp_multiqc.collect{it[1]}.ifEmpty([]))
+        .mix(ALIGN_READS.out.bowtie2_multiqc.collect{it[1]}.ifEmpty([]))
+        .mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+        .mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
+        .mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
+        .mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
 
     MULTIQC (
         ch_multiqc_files.collect(),

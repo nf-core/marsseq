@@ -14,12 +14,15 @@ workflow PREPARE_PIPELINE {
 
     main:
     ch_reads = Channel.empty()
+    ch_versions = Channel.empty()
 
     // convert XLS metadata into txt format
     PREPARE ( batches, gtf, ercc_regions )
+    ch_versions = ch_versions.mix(PREPARE.out.versions)
 
     // split fastq reads by predefined number of reads per fastq file
     ch_reads = FASTP_SPLIT ( batches ).reads
+    ch_versions = ch_versions.mix(FASTP_SPLIT.out.versions)
 
     // verify that split was performed correctly
     // R1 and R2 should always have a same pair
@@ -34,5 +37,5 @@ workflow PREPARE_PIPELINE {
     gene_intervals = PREPARE.out.gene_intervals
     reads          = ch_reads                   // channel: [ val(meta), path: *.fastq.gz ]
     fastp_multiqc  = FASTP_SPLIT.out.json
-    versions       = FASTP_SPLIT.out.versions
+    versions       = ch_versions
 }
