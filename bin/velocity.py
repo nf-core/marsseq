@@ -180,7 +180,7 @@ if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
     formatter = logging.Formatter("%(asctime)s  %(message)s", "%d-%m-%Y %H:%M:%S")
 
-    arg_parser = argparse.ArgumentParser(description="Plugin for converting and running velocity on MARS-seq 1/2.")
+    arg_parser = argparse.ArgumentParser(description="Plugin for converting and running velocity on MARS-seq v2.")
 
     arg_parser.add_argument("--version", "-v", action="version", version=f"velocity 0.1")
     command_parser = arg_parser.add_subparsers(dest="command")

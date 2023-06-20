@@ -106,7 +106,7 @@ def load_files(input_folder: str, output_folder: str, amp_batch: str) -> Tuple[s
 
 
 def main() -> None:
-    arg_parser = argparse.ArgumentParser(description="Filter reads per amplification batch from MARS-seq 1/2.")
+    arg_parser = argparse.ArgumentParser(description="Filter reads per amplification batch from MARS-seq v2.")
     arg_parser.add_argument("input", type=str, help="Input folder with fastq files")
     arg_parser.add_argument("output", type=str, help="Output folder")
     arg_parser.add_argument("--amp_batch", type=str, help="Batch name", required=True)

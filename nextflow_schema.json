@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-07/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/marsseq/master/nextflow_schema.json",
     "title": "nf-core/marsseq pipeline parameters",
-    "description": "MARS-seq 1/2 preprocessing pipeline",
+    "description": "MARS-seq v2 preprocessing pipeline",
     "type": "object",
     "definitions": {
         "skip_steps": {
