@@ -3,10 +3,10 @@
 import argparse
 import logging
 import os
-import pandas as pd
 import sys
-
 from typing import Any, Tuple
+
+import pandas as pd
 
 logging.basicConfig()
 logger = logging.getLogger()
@@ -53,7 +53,6 @@ def prepare_batch_metadata(
     seq: pd.DataFrame,
     wells: pd.DataFrame,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-
     # create amp_batches.txt
     amp_out = pd.DataFrame()
     add_column(amp_out, "Amp_batch_ID", amp["Amp_batch_ID"])
@@ -131,17 +130,13 @@ def generate_gene_intervals(args: argparse.Namespace) -> None:
 
     # transcripts
     gtf_transcripts = gtf.query('type == "transcript"').copy()
-    gtf_transcripts["gene_name"] = gtf_transcripts.gene_id.str.split(";", expand=True)[
-        3
-    ].str.replace("gene_name ", "")
+    gtf_transcripts["gene_name"] = gtf_transcripts.gene_id.str.split(";", expand=True)[3].str.replace("gene_name ", "")
     gtf_transcripts = gtf_transcripts[["chrom", "start", "end", "strand", "gene_name"]]
 
     # genes
     gtf_genes = gtf.query('type == "gene"').copy()
     gtf_genes["gene_name"] = (
-        gtf_genes.gene_id.str.split(";", expand=True)[2]
-        .str[len("gene_name") + 1 :]
-        .replace("gene_name ", "")
+        gtf_genes.gene_id.str.split(";", expand=True)[2].str[len("gene_name") + 1 :].replace("gene_name ", "")
     )
     gtf_genes = gtf_genes[["chrom", "start", "end", "strand", "gene_name"]]
 
@@ -165,11 +160,9 @@ def args() -> argparse.Namespace:
     Returns:
         argparse.Namespace: Parsed arguments
     """
-    arg_parser = argparse.ArgumentParser(
-        description="Preprocessing script for MARS-seq pipeline."
-    )
+    arg_parser = argparse.ArgumentParser(description="Preprocessing script for MARS-seq pipeline.")
 
-    arg_parser.add_argument("--version", "-v", action="version", version=f"v0.1")
+    arg_parser.add_argument("--version", "-v", action="version", version=f"v1.0")
     arg_parser.add_argument("--batch", action="store", type=str, required=True)
     arg_parser.add_argument("--amp_batches", action="store", type=str, required=True)
     arg_parser.add_argument("--seq_batches", action="store", type=str, required=True)
@@ -209,9 +202,7 @@ def main(args: argparse.Namespace):
         sys.exit(ex)
 
     # processed new txt files
-    amp_out, seq_out, wells_out = prepare_batch_metadata(
-        amp_batches, seq_batches, wells
-    )
+    amp_out, seq_out, wells_out = prepare_batch_metadata(amp_batches, seq_batches, wells)
 
     # store new results
     amp_out.to_csv(f"{args.output}/amp_batches.txt", sep="\t", index=False)

@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 import argparse
-import pandas as pd
 import os
 import sys
+
+import pandas as pd
 
 ROW_LENGTH: int = 70
 
@@ -21,21 +22,15 @@ def create_fasta(args: argparse.Namespace):
     with open(args.output, "w") as output:
         for _, row in spikes.iterrows():
             comment = f'>{row["ERCC_ID"]}'
-            seq = "\n".join(
-                [
-                    row["Sequence"][i : i + ROW_LENGTH]
-                    for i in range(0, len(row["Sequence"]), ROW_LENGTH)
-                ]
-            )
+            seq = "\n".join([row["Sequence"][i : i + ROW_LENGTH] for i in range(0, len(row["Sequence"]), ROW_LENGTH)])
             output.write(f"{comment}\n")
             output.write(f"{seq}\n")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--input", type=str, help="Input file [annotations/spike-seq.txt]"
-    )
+    parser.add_argument("--version", action="version", version="v1.0")
+    parser.add_argument("--input", type=str, help="Input file [annotations/spike-seq.txt]")
     parser.add_argument("--output", type=str, help="Output file")
     args = parser.parse_args()
 

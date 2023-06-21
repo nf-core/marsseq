@@ -4,7 +4,7 @@ suppressMessages(library(gplots))
 get_stats_per_seq_batch = function(seq_batch) {
     n_umis_per_cell = colSums(umitab)
     cell_mask = intersect(
-        rownames(sample_list)[sample_list$sequencing_batch %in%seq_batch], 
+        rownames(sample_list)[sample_list$sequencing_batch %in%seq_batch],
         single_cell_mask
     )
     n_cells = length(cell_mask)
@@ -20,7 +20,10 @@ get_stats_per_seq_batch = function(seq_batch) {
 }
 
 args = commandArgs(trailingOnly = TRUE)
-if (length(args) == 3) {
+if (length(args) == 1 && args[1] == "--version") {
+    message("v1.0")
+    quit()
+} else if (length(args) == 3) {
     well_cells_txt = args[1]
     amp_batches_txt = args[2]
     output_dir = args[3]
@@ -93,9 +96,9 @@ write.table(file = paste(output_dir, "/amp_batches_stats.txt", sep = ""),
 
 rownames(amp_batches) = amp_batches[, "Amp_batch_ID"]
 m4 = cbind(
-    amp_batch_ID = rownames(m), 
-    # amp_batches[rownames(m), c("Experiment_ID", "Description", "QC2..RT.2.")], 
-    amp_batches[rownames(m), c("Experiment_ID", "Description")], 
+    amp_batch_ID = rownames(m),
+    # amp_batches[rownames(m), c("Experiment_ID", "Description", "QC2..RT.2.")],
+    amp_batches[rownames(m), c("Experiment_ID", "Description")],
     m[, match(c("reads", "spike_yield", "gene_umis", "gene_umis_neg_control", "noise_estimation", "avg_noffsets_per_umi", "avg_reads_per_umi"), colnames(m))]
 )
 

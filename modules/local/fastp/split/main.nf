@@ -1,9 +1,3 @@
-// Import generic module functions
-include { initOptions; saveFiles; getSoftwareName } from './functions'
-
-params.options = [:]
-options        = initOptions(params.options)
-
 /*
  * Fastp module which splits the reads
  * into specified number of reads per file.
@@ -13,28 +7,26 @@ options        = initOptions(params.options)
 process FASTP_SPLIT {
     tag "$meta.id"
     label 'process_medium'
-    publishDir "${params.outdir}",
-        mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), meta:[:], publish_by_meta:[]) }
 
-    conda (params.enable_conda ? 'bioconda::fastp=0.20.1' : null)
-    if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container 'https://depot.galaxyproject.org/singularity/fastp:0.20.1--h8b12597_0'
-    } else {
-        container 'quay.io/biocontainers/fastp:0.20.1--h8b12597_0'
-    }
+    conda "bioconda::fastp=0.23.3"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/fastp:0.23.3--h5f740d0_0' :
+        'biocontainers/fastp:0.23.3--h5f740d0_0' }"
 
     input:
     tuple val(meta), path(reads)
 
     output:
     tuple val(meta), path('raw_reads/*fastq.gz'), emit: reads
+    tuple val(meta), path('*.json')             , emit: json
     path 'raw_reads/*.log'                      , emit: log
-    path '*.version.txt'                        , emit: version
+    path "versions.yml"                         , emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
-    def software = getSoftwareName(task.process)
-
+    def args = task.ext.args ?: ''
     """
     mkdir raw_reads/
     fastp \
@@ -47,9 +39,27 @@ process FASTP_SPLIT {
         --disable_length_filtering \\
         --disable_adapter_trimming \\
         --disable_trim_poly_g \\
-        $options.args \\
+        --json ${meta.id}.fastp.json \\
+        $args \\
         2> raw_reads/${meta.id}.fastp.log
 
-    echo \$(fastp --version 2>&1) | sed -e "s/fastp //g" > ${software}.version.txt
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        fastp: \$(fastp --version 2>&1 | sed -e "s/fastp //g")
+    END_VERSIONS
+    """
+
+    stub:
+    """
+    touch ${meta.id}.fastp.json
+    mkdir raw_reads/
+    touch raw_reads/000{1..3}.${reads[0]}
+    touch raw_reads/000{1..3}.${reads[1]}
+    touch raw_reads/${meta.id}.fastp.log
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        fastp: \$(fastp --version 2>&1 | sed -e "s/fastp //g")
+    END_VERSIONS
     """
 }

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import argparse
-import pandas as pd
 import logging
 import os
 import sys
 
+import pandas as pd
 
 logging.basicConfig()
 logger = logging.getLogger()
@@ -21,9 +21,7 @@ def is_unique(df: pd.DataFrame, column: str) -> None:
     """
 
     if df[column].duplicated().sum() > 0:
-        sys.exit(
-            f"The {column} is not unique, please make sure there are no duplicates."
-        )
+        sys.exit(f"The {column} is not unique, please make sure there are no duplicates.")
 
 
 def main(args: argparse.Namespace):
@@ -55,10 +53,8 @@ def main(args: argparse.Namespace):
 
 
 if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser(
-        description="Validate data folder which contains all txt files."
-    )
+    parser = argparse.ArgumentParser(description="Validate data folder which contains all txt files.")
+    parser.add_argument("--version", "-v", action="version", version=f"v1.0")
     parser.add_argument("--input", type=str, help="Input folder")
     args = parser.parse_args()
 

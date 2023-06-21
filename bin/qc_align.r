@@ -1,7 +1,11 @@
 #!/usr/bin/env Rscript
 
 args = commandArgs(trailingOnly = TRUE)
-if (length(args) == 2) {
+
+if (length(args) == 1 && args[1] == "--version") {
+    message("v1.0")
+    quit()
+} else if (length(args) == 2) {
     read_sam = args[1]
     read_qc = args[2]
 } else {
@@ -15,5 +19,5 @@ flag_counts = table(read.table(
 stats = read.table(read_qc, header = T)
 stats$mapped = flag_counts["0"] + flag_counts["16"]
 
-write.table(file = paste0("_", read_qc), 
+write.table(file = paste0("_", read_qc),
     stats, sep = "\t", col.names = T, row.names = F, quote = F)

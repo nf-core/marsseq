@@ -1,38 +1,50 @@
-// Import generic module functions
-include { initOptions; saveFiles; getSoftwareName } from './functions'
-
-params.options = [:]
-options        = initOptions(params.options)
-
-/*
- * Module for downloading any file using wget.
- */
 process WGET {
     tag "$filename"
-    label 'process_low'
-    publishDir "${params.outdir}",
-        mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), meta:[:], publish_by_meta:[]) }
+    label "process_low"
 
-    conda (params.enable_conda ? "bioconda::gnu-wget=1.18" : null)
-    if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/gnu-wget:1.18--h5bf99c6_5"
-    } else {
-        container "quay.io/biocontainers/gnu-wget:1.18--h5bf99c6_5"
-    }
+    conda "bioconda::gnu-wget=1.18"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/gnu-wget:1.18--h5bf99c6_5' :
+        'biocontainers/gnu-wget:1.18--h5bf99c6_5' }"
 
     input:
-    tuple val(filename), val(url)
+    val url
+    val filename
 
     output:
-    path "*.version.txt", emit: version
-    path "${filename}"  , emit: file
+    tuple val(meta), path ("$outfile"), emit: file
+    path "versions.yml",                emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
-    def software = getSoftwareName(task.process)
+    def args = task.ext.args ?: ""
+    // NOTE: get last extension, will fail for ther cases like tar.gz
+    extension = url.split("\\.")[-1]
+    outfile = "${filename}.${extension}"
+    meta = [ "id": "$outfile" ]
     """
-    wget $options.args $url -O $filename
+    wget $args $url -O $outfile
 
-    echo \$(wget -V 2>&1) | grep "GNU Wget" | cut -d" " -f3 > ${software}.version.txt
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        wget: \$(echo wget -V 2>&1 | grep "GNU Wget" | cut -d" " -f3 > versions.yml)
+    END_VERSIONS
+    """
+
+    stub:
+    def args = task.ext.args ?: ""
+    // NOTE: get last extension, will fail for ther cases like tar.gz
+    extension = url.split("\\.")[-1]
+    outfile = "${filename}.${extension}"
+    meta = [ "id": "$outfile" ]
+    """
+    touch ${outfile}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        wget: \$(echo wget -V 2>&1 | grep "GNU Wget" | cut -d" " -f3 > versions.yml)
+    END_VERSIONS
     """
 }

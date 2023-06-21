@@ -1,6 +1,26 @@
 #!/usr/bin/env perl
 use strict;
 
+if ($#ARGV == 0 and $ARGV[0] eq "--version") {
+  print "v1.0";
+  exit;
+}
+
+if ( $#ARGV < 8 ) {
+    die(
+        "usage: extract_labels.pl \
+                R1.fastq [file] \
+                R2.fastq [file] \
+                batch [str] \
+                seq_batches [folder] \
+                oligos.txt [file] \
+                amp_batches [folder] \
+                labeled_reads/R1.fastq [str] \
+                labeled_reads/R1.qc [str] \
+                output [folder]\n"
+    );
+}
+
 my %seqs2;
 my $r1_file        = $ARGV[0];
 my $r2_file        = $ARGV[1];
@@ -11,6 +31,7 @@ my $amp_batches_fn = $ARGV[5];
 my $out_fastq_file = $ARGV[6];
 my $out_stats_file = $ARGV[7];
 my $i5_design      = $ARGV[8];
+
 # my $scdb_path      = $ARGV[9];
 
 # my $i5_design;
@@ -18,6 +39,7 @@ my $i5_design      = $ARGV[8];
 #     $i5_design = $ARGV[9];
 # }
 my $index;
+
 # my $amp_batches_fn             = $scdb_path . "/annotations/amp_batches.txt";
 my @plate_barcode_intervals    = ();
 my @plate_barcode_i5_intervals = ();
@@ -34,10 +56,10 @@ my %pool_barcodes;
 
 open( SEQ_BATCHES, $seq_batches_fn )
   || die "cannot open file $seq_batches_fn to read.\n";
-<SEQ_BATCHES>; #Removing first line
+<SEQ_BATCHES>;    #Removing first line
 my $line = <SEQ_BATCHES>;
 chomp $line;
-my @line = split( "\t", $line );
+my @line      = split( "\t", $line );
 my $r1_design = $line[3];
 my $r2_design = $line[5];
 
@@ -71,7 +93,7 @@ for ( my $i = 0 ; $i <= $#column_names ; $i++ ) {
 }
 
 my @r1_split = split( /\./, $r1_design );
-my $cur_loc = 0;
+my $cur_loc  = 0;
 for ( my $ri = 0 ; $ri <= $#r1_split ; $ri++ ) {
     my $field_type = substr( $r1_split[$ri], length( $r1_split[$ri] ) - 1 );
     my $field_size =
@@ -88,7 +110,7 @@ for ( my $ri = 0 ; $ri <= $#r1_split ; $ri++ ) {
 }
 
 my @i5_split = split( /\./, $i5_design );
-my $cur_loc = 0;
+my $cur_loc  = 0;
 for ( my $ri = 0 ; $ri <= $#i5_split ; $ri++ ) {
     my $field_type = substr( $i5_split[$ri], length( $i5_split[$ri] ) - 1 );
     my $field_size =

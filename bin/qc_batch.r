@@ -58,11 +58,11 @@ make_amp_batch_qc_fig = function(amp_batch_ID, spike_concentrations_file, output
     spike_names = rownames(spike_concentration)
     gene_mask = setdiff(rownames(umitab_batch), spike_names)
 
-    read_stats = read.table(paste(output_dir, "/read_stats/", amp_batch_ID, ".txt",
+    read_stats = read.table(paste(output_dir, "/QC/read_stats/", amp_batch_ID, ".txt",
         sep = ""), header = T, row.names = 1)
-    read_stats_total = read.table(paste(output_dir, "/read_stats_amp_batch/",
+    read_stats_total = read.table(paste(output_dir, "/QC/read_stats_amp_batch/",
         amp_batch_ID, ".txt", sep = ""), header = T)
-    umi_data = read.table(paste(output_dir, "/umi_stats/", amp_batch_ID, ".txt",
+    umi_data = read.table(paste(output_dir, "/QC/umi_stats/", amp_batch_ID, ".txt",
         sep = ""), header = T, row.names = 1)
 
     x = read_stats[mask1, ]
@@ -126,7 +126,7 @@ make_amp_batch_qc_fig = function(amp_batch_ID, spike_concentrations_file, output
     mtext("C", side = 3, adj = -0.6, line = 2)
     message("C")
 
-    m = read.table(paste(output_dir, "/umi_nuc_per_pos/", amp_batch_ID, ".txt",
+    m = read.table(paste(output_dir, "/QC/umi_nuc_per_pos/", amp_batch_ID, ".txt",
         sep = ""), header = T, row.names = 1)
     freq_per_pos = m/rowSums(m)
     matplot(freq_per_pos, pch = c("A", "C", "G", "T"), col = c(3, 4, "orange", "red"),
@@ -257,7 +257,7 @@ make_amp_batch_qc_fig = function(amp_batch_ID, spike_concentrations_file, output
 
     par(mar = c(4, 5, 4, 2))
 
-    noffsets_per_umi = read.table(paste(output_dir, "/noffsets_per_umi_distrib/",
+    noffsets_per_umi = read.table(paste(output_dir, "/QC/noffsets_per_umi_distrib/",
         amp_batch_ID, ".txt", sep = ""), header = T, row.names = 1)
     barplot2(log10(1 + t(noffsets_per_umi[2:20, 3])), col = "gray", main = "#IVT products/UMI",
         names = 1:19, plot.grid = T, border = F, ylab = "log10(counts)", space = 0)
@@ -268,7 +268,7 @@ make_amp_batch_qc_fig = function(amp_batch_ID, spike_concentrations_file, output
     main_stats$avg_noffsets_per_umi = avg
 
 
-    nreads_per_umi = read.table(paste(output_dir, "/nreads_per_umi_distrib/",
+    nreads_per_umi = read.table(paste(output_dir, "/QC/nreads_per_umi_distrib/",
         amp_batch_ID, ".txt", sep = ""), header = T, row.names = 1)
     barplot2(log10(1 + t(nreads_per_umi[2:51, 3])), col = "gray", main = "#Reads/UMI",
         names = 1:50, plot.grid = T, border = F, ylab = "log10(counts)", space = 0)
@@ -358,16 +358,19 @@ get_stats_per_seq_batch = function(seq_batch) {
 
 args = commandArgs(trailingOnly = TRUE)
 # args=c('AB339','output')
-if (length(args) == 6) {
+
+if (length(args) == 1 && args[1] == "--version") {
+    message("v1.0")
+    quit()
+} else if (length(args) == 6) {
     amp_batch = args[1]
     wells_cells_txt = args[2]
     amp_batches_txt = args[3]
     seq_batches_txt = args[4]
     spike_concentrations_txt = args[5]
-    output_dir = args[6]
+    output_dir = args[6] # output where umi.tab and others are stored
 } else {
-    message("Usage: Rscript qc_batch.r [amp_batch] [well_cells.txt] [amp_batches.txt] [seq_batches.txt] [spike_concentrations.txt] [output_dir]")
-    stop()
+    stop("Usage: Rscript qc_batch.r [amp_batch] [well_cells.txt] [amp_batches.txt] [seq_batches.txt] [spike_concentrations.txt] [output_dir]")
 }
 
 gene_spike_col = c(colors()[132], "firebrick")
@@ -378,13 +381,13 @@ seq_batches = read.delim(seq_batches_txt, stringsAsFactors = F, header = T, sep 
 
 rownames(sample_list) = sample_list$Well_ID
 
-pdf(paste(output_dir, "/QC/report_per_amp_batch/", amp_batch, ".pdf", sep = ""), 8.3,
+pdf(paste("report_per_amp_batch/", amp_batch, ".pdf", sep = ""), 8.3,
     11.7, paper = "a4")
 
 message(amp_batch)
 
 try({
     main_stats = make_amp_batch_qc_fig(amp_batch, spike_concentrations_txt, output_dir)
-    save(main_stats, file = paste(output_dir, "/QC/rd/", amp_batch, ".rd", sep = ""))
+    save(main_stats, file = paste("rd/", amp_batch, ".rd", sep = ""))
 })
 garbage <- dev.off()
