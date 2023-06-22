@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# Original source code can be found at
+# Adapted source code from
 # https://tanaylab.github.io/old_resources/pages/672.html
 use strict;
 
