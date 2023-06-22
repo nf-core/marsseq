@@ -17,16 +17,19 @@ process PREPARE {
         'biocontainers/mulled-v2-0bcca2890a3ab7be29a83e813a02d340d6f54660:4cb478c6e57df2ef85ea5f8eae6d717c017962cd-0' }"
 
     input:
-    tuple val(meta), path(reads)
+    path(amp_batches)
+    path(seq_batches)
+    path(well_cells)
     path(gtf)
     path(ercc_regions)
+    tuple val(meta), path(reads)
 
     output:
-    path "amp_batches.txt"      , emit: amp_batches
-    path "gene_intervals.txt"   , emit: gene_intervals
-    path "seq_batches.txt"      , emit: seq_batches
-    path "wells_cells.txt"      , emit: wells_cells
-    path "versions.yml"         , emit: versions
+    path "amp_batches.txt"   , emit: amp_batches
+    path "gene_intervals.txt", emit: gene_intervals
+    path "seq_batches.txt"   , emit: seq_batches
+    path "wells_cells.txt"   , emit: wells_cells
+    path "versions.yml"      , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -35,9 +38,9 @@ process PREPARE {
     """
     prepare_pipeline.py \\
         --batch ${meta.id} \\
-        --amp_batches ${meta.amp_batches} \\
-        --seq_batches ${meta.seq_batches} \\
-        --well_cells ${meta.well_cells} \\
+        --amp_batches $amp_batches \\
+        --seq_batches $seq_batches \\
+        --well_cells $well_cells \\
         --gtf $gtf \\
         --output .
     cat $ercc_regions >> gene_intervals.txt

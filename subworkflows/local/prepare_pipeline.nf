@@ -8,20 +8,30 @@ include { FASTP_SPLIT } from '../../modules/local/fastp/split/main'
 
 workflow PREPARE_PIPELINE {
     take:
-    batches       // channel: [ val(meta), [ reads ] ]
+    amp_batches   // channel: amp_batch
+    seq_batches   // channel: seq_batch
+    well_cells    // channel: well_cells
     gtf           // channel: gtf
     ercc_regions  // channel: ercc_regions
+    reads         // channel: [ val(meta), [ reads ] ]
 
     main:
     ch_reads = Channel.empty()
     ch_versions = Channel.empty()
 
     // convert XLS metadata into txt format
-    PREPARE ( batches, gtf, ercc_regions )
+    PREPARE (
+        amp_batches,
+        seq_batches,
+        well_cells,
+        gtf,
+        ercc_regions,
+        reads
+    )
     ch_versions = ch_versions.mix(PREPARE.out.versions)
 
     // split fastq reads by predefined number of reads per fastq file
-    ch_reads = FASTP_SPLIT ( batches ).reads
+    ch_reads = FASTP_SPLIT ( reads ).reads
     ch_versions = ch_versions.mix(FASTP_SPLIT.out.versions)
 
     // verify that split was performed correctly
