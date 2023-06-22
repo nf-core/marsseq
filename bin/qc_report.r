@@ -1,4 +1,6 @@
 #!/usr/bin/env Rscript
+# Original source code can be found at
+# https://tanaylab.github.io/old_resources/pages/672.html
 suppressMessages(library(gplots))
 
 get_stats_per_seq_batch = function(seq_batch) {
