@@ -12,8 +12,7 @@
 
 ## Introduction
 
-**nf-core/marsseq** is a bioinformatics pipeline for MARS-seq v2.0 preprocessing pipeline. As an additional work we have developed custom set of scripts to run velocity inference using `StarSolo`.
-We do so by converting the raw reads into 10X v2 format.
+**nf-core/marsseq** is a bioinformatics preprocessing pipeline for MARS-seq v2.0. MARS-seq is a plate-based technique that can be combined with FACS in order to study rare populations of cells. On top of the pre-existing pipeline, we have developed an RNA velocity workflow that can be used to study cell dynamics using `StarSolo`. We do so by converting the raw FASTQ reads into 10X v2 format.
 
 ![Workflow](docs/images/workflow.png)
 
