@@ -1,4 +1,6 @@
 #!/usr/bin/env perl
+# Adapted source code from
+# https://tanaylab.github.io/old_resources/pages/672.html
 use strict;
 
 if ($#ARGV == 0 and $ARGV[0] eq "--version") {

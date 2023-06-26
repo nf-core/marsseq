@@ -1,4 +1,6 @@
 #!/usr/bin/env Rscript
+# Adapted source code from
+# https://tanaylab.github.io/old_resources/pages/672.html
 
 args = commandArgs(trailingOnly = TRUE)
 

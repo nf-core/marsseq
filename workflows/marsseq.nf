@@ -98,7 +98,14 @@ workflow MARSSEQ {
     )
     ch_versions = ch_versions.mix(FASTQC.out.versions)
 
-    PREPARE_PIPELINE ( INPUT_CHECK.out.reads, ch_gtf, ch_ercc_regions )
+    PREPARE_PIPELINE (
+        INPUT_CHECK.out.reads.map { it[0].amp_batches },
+        INPUT_CHECK.out.reads.map { it[0].seq_batches },
+        INPUT_CHECK.out.reads.map { it[0].well_cells },
+        ch_gtf,
+        ch_ercc_regions,
+        INPUT_CHECK.out.reads
+    )
     ch_versions = ch_versions.mix(PREPARE_PIPELINE.out.versions)
 
     LABEL_READS (
