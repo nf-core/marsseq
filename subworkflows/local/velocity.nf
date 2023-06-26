@@ -9,9 +9,11 @@ include { STAR_ALIGN as VELOCITY_STARSOLO } from '../../modules/nf-core/star/ali
 
 workflow VELOCITY {
     take:
-    reads   // channel [ meta, reads ]
-    index   // channel file(star index)
-    gtf     // channel file(gtf)
+    amp_batches   // channel: amp_batch
+    well_cells    // channel: well_cells
+    reads         // channel [ meta, reads ]
+    index         // channel file(star index)
+    gtf           // channel file(gtf)
 
     main:
     ch_versions = Channel.empty()
@@ -24,7 +26,7 @@ workflow VELOCITY {
     ch_versions = ch_versions.mix(VELOCITY_CONVERT.out.versions)
 
     // build whitelist.txt
-    VELOCITY_WHITELIST ( reads )
+    VELOCITY_WHITELIST ( amp_batches, well_cells, reads )
     ch_versions = ch_versions.mix(VELOCITY_WHITELIST.out.versions)
 
     // trim poly-T and low quality reads

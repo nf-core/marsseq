@@ -11,6 +11,8 @@ process VELOCITY_WHITELIST {
         'biocontainers/mulled-v2-0bcca2890a3ab7be29a83e813a02d340d6f54660:4cb478c6e57df2ef85ea5f8eae6d717c017962cd-0' }"
 
     input:
+    path(amp_batches)
+    path(well_cells)
     tuple val(meta), path(reads)
 
     output:
@@ -24,8 +26,8 @@ process VELOCITY_WHITELIST {
     """
     velocity.py whitelist \\
         --batch $meta.id \\
-        --amp_batches $meta.amp_batches \\
-        --well_cells $meta.well_cells
+        --amp_batches $amp_batches \\
+        --well_cells $well_cells
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
