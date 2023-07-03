@@ -36,7 +36,7 @@ Next, you have to generate genome references to incorporate ERCC spike-ins. Refe
 ```bash
 nextflow run nf-core/marsseq \
   -profile <docker/singularity/.../institute> \
-  --genome <mm10,mm9,GRCh38> \
+  --genome <mm10,mm9,GRCh38_v43> \
   --build_references \
   --input samplsheet.csv \
   --outdir <OUTDIR>
@@ -47,7 +47,7 @@ Now, you can run the pipeline using:
 ```bash
 nextflow run nf-core/marsseq \
   -profile <docker/singularity/.../institute> \
-  --genome <mm10,mm9,GRCh38> \
+  --genome <mm10,mm9,GRCh38_v43> \
   --input samplesheet.csv \
   --outdir <OUTDIR>
 ```

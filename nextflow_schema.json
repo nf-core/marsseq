@@ -78,7 +78,7 @@
                     "description": "Name of Genomes reference.",
                     "default": "mm10",
                     "fa_icon": "fas fa-book",
-                    "help_text": "Currently supported mouse: `mm9`, `mm10` and human `GRCh38`. The references are downloaded from [GENCODE](https://www.gencodegenes.org) database."
+                    "help_text": "Currently supported mouse: `mm9`, `mm10` and human `GRCh38_v43`. The references are downloaded from [GENCODE](https://www.gencodegenes.org) database."
                 },
                 "fasta": {
                     "type": "string",
