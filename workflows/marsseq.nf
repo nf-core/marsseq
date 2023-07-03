@@ -15,16 +15,10 @@ log.info logo + paramsSummaryLog(workflow) + citation
 
 WorkflowMarsseq.initialise(params, log)
 
-<<<<<<< HEAD
-=======
 // Check input path parameters to see if they exist
 def checkPathParamList = [ params.input, params.multiqc_config, params.fasta, params.gtf ]
 for (param in checkPathParamList) { if (param && !params.build_references) { file(param, checkIfExists: true) } }
 
-// Check mandatory parameters
-if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
-
->>>>>>> dev
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CONFIG FILES
@@ -96,13 +90,9 @@ workflow MARSSEQ {
     //
     // SUBWORKFLOW: Read in samplesheet, validate and stage input files
     //
-<<<<<<< HEAD
     INPUT_CHECK (
         file(params.input)
     )
-=======
-    INPUT_CHECK ( ch_input )
->>>>>>> dev
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
     // TODO: OPTIONAL, you can use nf-validation plugin to create an input channel from the samplesheet with Channel.fromSamplesheet("input")
     // See the documentation https://nextflow-io.github.io/nf-validation/samplesheets/fromSamplesheet/
