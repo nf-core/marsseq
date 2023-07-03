@@ -101,16 +101,14 @@
                 },
                 "bowtie2_index": {
                     "type": "string",
-                    "format": "file-path",
-                    "mimetype": "text/plain",
+                    "format": "directory-path",
                     "description": "Path to BOWTIE2 index.",
                     "fa_icon": "fas fa-code-branch",
                     "help_text": "This parameter is *mandatory* if `--genome` is not specified."
                 },
                 "star_index": {
                     "type": "string",
-                    "format": "file-path",
-                    "mimetype": "text/plain",
+                    "format": "directory-path",
                     "description": "Path to STAR index.",
                     "fa_icon": "fas fa-code-branch",
                     "help_text": "This parameter is *mandatory* if `--genome` is not specified."
