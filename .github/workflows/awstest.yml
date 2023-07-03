@@ -12,11 +12,12 @@ jobs:
     steps:
       # Launch workflow using Tower CLI tool action
       - name: Launch build-reference workflow via tower
-        uses: seqeralabs/action-tower-launch@v1
+        uses: seqeralabs/action-tower-launch@v2
         with:
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
+          revision: ${{ github.sha }}
           workdir: s3://${{ secrets.AWS_S3_BUCKET }}/work/marsseq/work-${{ github.sha }}
           parameters: |
             {
@@ -43,8 +44,11 @@ jobs:
               "genomes_base": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-test-${{ github.sha }}/references",
               "velocity": true
             }
-          profiles: test,aws_tower
+          profiles: test
+
       - uses: actions/upload-artifact@v3
         with:
           name: Tower debug log file
-          path: tower_action_*.log
+          path: |
+            tower_action_*.log
+            tower_action_*.json

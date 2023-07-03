@@ -57,11 +57,11 @@ nextflow run nf-core/marsseq \
 > provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
 > see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
 
-For more details, please refer to the [usage documentation](https://nf-co.re/marsseq/usage) and the [parameter documentation](https://nf-co.re/marsseq/parameters).
+For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/marsseq/usage) and the [parameter documentation](https://nf-co.re/marsseq/parameters).
 
 ## Pipeline output
 
-To see the the results of a test run with a full size dataset refer to the [results](https://nf-co.re/marsseq/results) tab on the nf-core website pipeline page.
+To see the results of an example test run with a full size dataset refer to the [results](https://nf-co.re/marsseq/results) tab on the nf-core website pipeline page.
 For more details about the output files and reports, please refer to the
 [output documentation](https://nf-co.re/marsseq/output).
 
