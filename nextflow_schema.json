@@ -5,6 +5,19 @@
     "description": "MARS-seq v2 preprocessing pipeline",
     "type": "object",
     "definitions": {
+        "skip_steps": {
+            "title": "Skip steps",
+            "type": "object",
+            "description": "Skip analysis steps",
+            "default": "",
+            "properties": {
+                "skip_qc": {
+                    "type": "boolean",
+                    "description": "Skip QC steps"
+                }
+            },
+            "fa_icon": "fas fa-fast-forward"
+        },
         "input_output_options": {
             "title": "Input/output options",
             "type": "object",
@@ -39,6 +52,18 @@
                     "type": "string",
                     "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
+                },
+                "build_references": {
+                    "type": "boolean",
+                    "fa_icon": "far fa-file-code",
+                    "description": "Specifies which analysis type for the pipeline - either build references or analyse data"
+                },
+                "genomes_base": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Directory for Genomes references.",
+                    "fa_icon": "fas fa-cloud-download-alt",
+                    "hidden": true
                 }
             }
         },
@@ -50,9 +75,10 @@
             "properties": {
                 "genome": {
                     "type": "string",
-                    "description": "Name of iGenomes reference.",
+                    "description": "Name of Genomes reference.",
+                    "default": "mm10",
                     "fa_icon": "fas fa-book",
-                    "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
+                    "help_text": "Currently supported mouse: `mm9`, `mm10` and human `GRCh38`. The references are downloaded from [GENCODE](https://www.gencodegenes.org) database."
                 },
                 "fasta": {
                     "type": "string",
@@ -61,23 +87,51 @@
                     "mimetype": "text/plain",
                     "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
                     "description": "Path to FASTA genome file.",
-                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified",
                     "fa_icon": "far fa-file-code"
                 },
-                "igenomes_base": {
+                "gtf": {
                     "type": "string",
-                    "format": "directory-path",
-                    "description": "Directory / URL base for iGenomes references.",
-                    "default": "s3://ngi-igenomes/igenomes",
-                    "fa_icon": "fas fa-cloud-download-alt",
-                    "hidden": true
+                    "format": "file-path",
+                    "mimetype": "text/plain",
+                    "pattern": "^\\S+\\.gtf(\\.gz)?$",
+                    "description": "Path to GTF annotation file.",
+                    "fa_icon": "fas fa-code-branch",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified."
                 },
-                "igenomes_ignore": {
+                "bowtie2_index": {
+                    "type": "string",
+                    "format": "file-path",
+                    "mimetype": "text/plain",
+                    "description": "Path to BOWTIE2 index.",
+                    "fa_icon": "fas fa-code-branch",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified."
+                },
+                "star_index": {
+                    "type": "string",
+                    "format": "file-path",
+                    "mimetype": "text/plain",
+                    "description": "Path to STAR index.",
+                    "fa_icon": "fas fa-code-branch",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified."
+                }
+            }
+        },
+        "rna_velocity": {
+            "title": "RNA velocity",
+            "type": "object",
+            "description": "Convert original reads to 10X format in order to execute RNA velocity",
+            "default": "",
+            "properties": {
+                "velocity": {
                     "type": "boolean",
-                    "description": "Do not load the iGenomes reference config.",
-                    "fa_icon": "fas fa-ban",
-                    "hidden": true,
-                    "help_text": "Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`."
+                    "default": false,
+                    "description": "Run RNA velocity"
+                },
+                "read_length": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-ruler",
+                    "description": "Read length required for STAR aligner"
                 }
             }
         },
@@ -285,10 +339,16 @@
     },
     "allOf": [
         {
+            "$ref": "#/definitions/skip_steps"
+        },
+        {
             "$ref": "#/definitions/input_output_options"
         },
         {
             "$ref": "#/definitions/reference_genome_options"
+        },
+        {
+            "$ref": "#/definitions/rna_velocity"
         },
         {
             "$ref": "#/definitions/institutional_config_options"

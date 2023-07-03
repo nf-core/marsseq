@@ -24,10 +24,7 @@ class RowChecker:
 
     """
 
-    VALID_FORMATS = (
-        ".fq.gz",
-        ".fastq.gz",
-    )
+    VALID_FORMATS = (".fq.gz", ".fastq.gz", ".xls", ".xlsx")
 
     def __init__(
         self,
@@ -96,14 +93,10 @@ class RowChecker:
 
     def _validate_pair(self, row):
         """Assert that read pairs have the same file extension. Report pair status."""
-        if row[self._first_col] and row[self._second_col]:
-            row[self._single_col] = False
-            first_col_suffix = Path(row[self._first_col]).suffixes[-2:]
-            second_col_suffix = Path(row[self._second_col]).suffixes[-2:]
-            if first_col_suffix != second_col_suffix:
-                raise AssertionError("FASTQ pairs must have the same file extensions.")
-        else:
-            row[self._single_col] = True
+        first_col_suffix = Path(row[self._first_col]).suffixes[-2:]
+        second_col_suffix = Path(row[self._second_col]).suffixes[-2:]
+        if first_col_suffix != second_col_suffix:
+            raise AssertionError("FASTQ pairs must have the same file extensions.")
 
     def _validate_fastq_format(self, filename):
         """Assert that a given filename has one of the expected FASTQ extensions."""
@@ -123,11 +116,11 @@ class RowChecker:
         """
         if len(self._seen) != len(self.modified):
             raise AssertionError("The pair of sample name and FASTQ must be unique.")
-        seen = Counter()
-        for row in self.modified:
-            sample = row[self._sample_col]
-            seen[sample] += 1
-            row[self._sample_col] = f"{sample}_T{seen[sample]}"
+        # seen = Counter()
+        # for row in self.modified:
+        #     sample = row[self._sample_col]
+        #     seen[sample] += 1
+        #     row[self._sample_col] = f"{sample}_T{seen[sample]}"
 
 
 def read_head(handle, num_lines=10):
@@ -176,19 +169,16 @@ def check_samplesheet(file_in, file_out):
             be created; always in CSV format.
 
     Example:
-        This function checks that the samplesheet follows the following structure,
-        see also the `viral recon samplesheet`_::
+        This function checks that the samplesheet follows the custom structure:
 
-            sample,fastq_1,fastq_2
-            SAMPLE_PE,SAMPLE_PE_RUN1_1.fastq.gz,SAMPLE_PE_RUN1_2.fastq.gz
-            SAMPLE_PE,SAMPLE_PE_RUN2_1.fastq.gz,SAMPLE_PE_RUN2_2.fastq.gz
-            SAMPLE_SE,SAMPLE_SE_RUN1_1.fastq.gz,
+            batch,fastq_1,fastq_2,amp_batches,seq_batches,well_cells
+            BATCH,SAMPLE_PE_RUN1_1.fastq.gz,SAMPLE_PE_RUN1_2.fastq.gz,amp_batches.xls,seq_batches.xls,well_cells.xls
 
-    .. _viral recon samplesheet:
-        https://raw.githubusercontent.com/nf-core/test-datasets/viralrecon/samplesheet/samplesheet_test_illumina_amplicon.csv
+    .. _marsseq recon samplesheet:
+        https://raw.githubusercontent.com/nf-core/test-datasets/marsseq/samplesheet/samplesheet_test.csv
 
     """
-    required_columns = {"sample", "fastq_1", "fastq_2"}
+    required_columns = {"batch", "fastq_1", "fastq_2", "amp_batches", "seq_batches", "well_cells"}
     # See https://docs.python.org/3.9/library/csv.html#id3 to read up on `newline=""`.
     with file_in.open(newline="") as in_handle:
         reader = csv.DictReader(in_handle, dialect=sniff_format(in_handle))
@@ -198,7 +188,7 @@ def check_samplesheet(file_in, file_out):
             logger.critical(f"The sample sheet **must** contain these column headers: {req_cols}.")
             sys.exit(1)
         # Validate each row.
-        checker = RowChecker()
+        checker = RowChecker(sample_col="batch", single_col=None)
         for i, row in enumerate(reader):
             try:
                 checker.validate_and_transform(row)
@@ -207,7 +197,6 @@ def check_samplesheet(file_in, file_out):
                 sys.exit(1)
         checker.validate_unique_samples()
     header = list(reader.fieldnames)
-    header.insert(1, "single_end")
     # See https://docs.python.org/3.9/library/csv.html#id3 to read up on `newline=""`.
     with file_out.open(mode="w", newline="") as out_handle:
         writer = csv.DictWriter(out_handle, header, delimiter=",")

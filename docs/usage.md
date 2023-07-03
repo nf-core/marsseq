@@ -6,49 +6,51 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+nf-core/marsseq is a pre-processing pipeline for MARS-seq experiments. We additionally introduce RNA velocity workflow that can be used to study
+cell dynamics along differentiation.
 
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create a samplesheet with information about the batch you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 6 columns, and a header row as shown in the examples below.
 
 ```bash
 --input '[path to samplesheet file]'
 ```
 
-### Multiple runs of the same sample
-
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
-
-```console
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
-```
-
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+Each sequencing batch consists of multiple amplification batches. Therefore the
+pipeline supports running only one batch, meaning one has to create a separate
+samplesheet for each invididual batch.
 
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
+Example for test sequencing batch (`SB26`).
 
 ```console
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+batch,fastq_1,fastq_2,amp_batches,seq_batches,well_cells
+SB26,Undetermined_S0_L001_R1_001.fastq.gz,Undetermined_S0_L001_R2_001.fastq.gz,amp_batches.xlsx,seq_batches.xlsx,wells_cells.xlsx
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+Example for test sequencing batch (`SB28`).
+
+```console
+batch,fastq_1,fastq_2,amp_batches,seq_batches,well_cells
+SB28,Undetermined_S0_L001_R1_001.fastq.gz,Undetermined_S0_L001_R2_001.fastq.gz,amp_batches.xlsx,seq_batches.xlsx,wells_cells.xlsx
+```
+
+| Column        | Description                                                                                                                |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `sample`      | Custom batch name.                                                                                                         |
+| `fastq_1`     | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz". |
+| `fastq_2`     | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz". |
+| `amp_batches` | Information about amplification batch                                                                                      |
+| `seq_batches` | Information about the sequencing batch                                                                                     |
+| `well_cells`  | Information about individual sorted cell                                                                                   |
+
+We provide an excel templates for each file:
+
+- [amp_batches.xlsx](../assets/amp_batches.xlsx)
+- [wells_cells.xlsx](../assets/wells_cells.xlsx)
+- [seq_batches.xslx](../assets/seq_batches.xlsx)
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 

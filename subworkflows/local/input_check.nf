@@ -24,21 +24,33 @@ workflow INPUT_CHECK {
 def create_fastq_channel(LinkedHashMap row) {
     // create meta map
     def meta = [:]
-    meta.id         = row.sample
-    meta.single_end = row.single_end.toBoolean()
+    meta.id         = row.batch
+    meta.single_end = false
 
     // add path(s) of the fastq file(s) to the meta map
-    def fastq_meta = []
     if (!file(row.fastq_1).exists()) {
         exit 1, "ERROR: Please check input samplesheet -> Read 1 FastQ file does not exist!\n${row.fastq_1}"
     }
-    if (meta.single_end) {
-        fastq_meta = [ meta, [ file(row.fastq_1) ] ]
-    } else {
-        if (!file(row.fastq_2).exists()) {
-            exit 1, "ERROR: Please check input samplesheet -> Read 2 FastQ file does not exist!\n${row.fastq_2}"
-        }
-        fastq_meta = [ meta, [ file(row.fastq_1), file(row.fastq_2) ] ]
+
+    if (!file(row.fastq_2).exists()) {
+        exit 1, "ERROR: Please check input samplesheet -> Read 2 FastQ file does not exist!\n${row.fastq_2}"
     }
-    return fastq_meta
+
+    if (!file(row.amp_batches).exists()) {
+        exit 1, "ERROR: amp_batch file does not exist!"
+    }
+
+    if (!file(row.seq_batches).exists()) {
+        exit 1, "ERROR: seq_batches file does not exist!"
+    }
+
+    if (!file(row.well_cells).exists()) {
+        exit 1, "ERROR: well_cells file does not exist!"
+    }
+
+    meta.amp_batches = file(row.amp_batches)
+    meta.seq_batches = file(row.seq_batches)
+    meta.well_cells = file(row.well_cells)
+
+    return [ meta, [ file(row.fastq_1), file(row.fastq_2) ] ]
 }

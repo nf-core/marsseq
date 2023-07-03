@@ -1,0 +1,43 @@
+name: fastp
+description: Perform adapter/quality trimming on sequencing reads
+keywords:
+  - trimming
+  - quality control
+  - fastq
+tools:
+  - fastp:
+      description: |
+        A tool designed to provide fast all-in-one preprocessing for FastQ files. This tool is developed in C++ with multithreading supported to afford high performance.
+      documentation: https://github.com/OpenGene/fastp
+      doi: https://doi.org/10.1093/bioinformatics/bty560
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - reads:
+      type: file
+      description: |
+        List of paired-end FastQ files.
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - reads:
+      type: file
+      description: Splitted raw FASTQ files.
+      pattern: "_temp/*.fastq.gz"
+  - log:
+      type: file
+      description: fastq log file
+      pattern: "*.log"
+  - version:
+      type: file
+      description: File containing software version
+      pattern: "*.{version.txt}"
+authors:
+  - "@matq007"
+  - "@drpatelh"

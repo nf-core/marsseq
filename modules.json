@@ -5,19 +5,55 @@
         "https://github.com/nf-core/modules.git": {
             "modules": {
                 "nf-core": {
+                    "bowtie2/align": {
+                        "branch": "master",
+                        "git_sha": "fe54581f8bed20e4c4a51c616c93fd3379d89820",
+                        "installed_by": ["modules"]
+                    },
+                    "bowtie2/build": {
+                        "branch": "master",
+                        "git_sha": "6a24fbe314bb2e6fe6306c29a63076ea87e8eb3c",
+                        "installed_by": ["modules"]
+                    },
+                    "cat/cat": {
+                        "branch": "master",
+                        "git_sha": "911696ea0b62df80e900ef244d7867d177971f73",
+                        "installed_by": ["modules"]
+                    },
                     "custom/dumpsoftwareversions": {
                         "branch": "master",
-                        "git_sha": "76cc4938c1f6ea5c7d83fed1eeffc146787f9543",
+                        "git_sha": "911696ea0b62df80e900ef244d7867d177971f73",
+                        "installed_by": ["modules"]
+                    },
+                    "cutadapt": {
+                        "branch": "master",
+                        "git_sha": "0efbaeb95c58da5a1096c99b5e919bc0c99cc952",
                         "installed_by": ["modules"]
                     },
                     "fastqc": {
                         "branch": "master",
-                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "git_sha": "911696ea0b62df80e900ef244d7867d177971f73",
+                        "installed_by": ["modules"]
+                    },
+                    "gunzip": {
+                        "branch": "master",
+                        "git_sha": "5c460c5a4736974abde2843294f35307ee2b0e5e",
                         "installed_by": ["modules"]
                     },
                     "multiqc": {
                         "branch": "master",
-                        "git_sha": "f2d63bd5b68925f98f572eed70993d205cc694b7",
+                        "git_sha": "911696ea0b62df80e900ef244d7867d177971f73",
+                        "installed_by": ["modules"]
+                    },
+                    "star/align": {
+                        "branch": "master",
+                        "git_sha": "57d75dbac06812c59798a48585032f6e50bb1914",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/star/align/star-align.diff"
+                    },
+                    "star/genomegenerate": {
+                        "branch": "master",
+                        "git_sha": "603ecbd9f45300c9788f197d2a15a005685b4220",
                         "installed_by": ["modules"]
                     }
                 }

@@ -10,9 +10,23 @@
 
 ## Pipeline tools
 
+- [cutadapt](https://doi.org/10.14806/ej.17.1.200)
+
+  > MARTIN, Marcel; EMBnet.journal, [S.l.], v. 17, n. 1, p. pp. 10-12, may 2011. ISSN 2226-6089
+
 - [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 
-  > Andrews, S. (2010). FastQC: A Quality Control Tool for High Throughput Sequence Data [Online]. Available online https://www.bioinformatics.babraham.ac.uk/projects/fastqc/.
+- [fastp](https://www.ncbi.nlm.nih.gov/pubmed/30423086/)
+
+  > Chen S, Zhou Y, Chen Y, Gu J. fastp: an ultra-fast all-in-one FASTQ preprocessor. Bioinformatics. 2018 Sep 1;34(17):i884-i890. doi: 10.1093/bioinformatics/bty560. PubMed PMID: 30423086; PubMed Central PMCID: PMC6129281.
+
+- [STAR](https://pubmed.ncbi.nlm.nih.gov/23104886/)
+
+  > Dobin A, Davis CA, Schlesinger F, Drenkow J, Zaleski C, Jha S, Batut P, Chaisson M, Gingeras TR. STAR: ultrafast universal RNA-seq aligner Bioinformatics. 2013 Jan 1;29(1):15-21. doi: 10.1093/bioinformatics/bts635. Epub 2012 Oct 25. PubMed PMID: 23104886; PubMed Central PMCID: PMC3530905.
+
+- [STARsolo](https://doi.org/10.1101/2021.05.05.442755)
+
+  > Benjamin Kaminow, Dinar Yunusov, Alexander Dobin; bioRxiv 2021.05.05.442755; doi:
 
 - [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
 
