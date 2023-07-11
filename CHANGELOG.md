@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Dependencies`
 
-- [#6](https://github.com/nf-core/marsseq/pull/6) sync with template 2.8
+- [#6](https://github.com/nf-core/marsseq/pull/6) sync with template 2.8 -> 2.9
 - [#4](https://github.com/nf-core/marsseq/issues/4) - Fix AWS testing with s3 bucket
 
 ## v1.0.1 - [26-06-2023]
