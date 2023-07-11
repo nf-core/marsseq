@@ -24,8 +24,7 @@ jobs:
           parameters: |
             {
               "hook_url": "${{ secrets.MEGATESTS_ALERTS_SLACK_HOOK_URL }}",
-              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-${{ github.sha }}"
-              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-test-${{ github.sha }}",
+              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-${{ github.sha }}",
               "build_references": true,
               "velocity": true
             }
@@ -36,16 +35,18 @@ jobs:
           path: tower_action_*.log
 
       - name: Launch execution workflow via tower
-        uses: seqeralabs/action-tower-launch@v1
+        uses: seqeralabs/action-tower-launch@v2
         with:
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
+          revision: ${{ github.sha }}
           workdir: s3://${{ secrets.AWS_S3_BUCKET }}/work/marsseq/work-${{ github.sha }}
           parameters: |
             {
-              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-test-${{ github.sha }}",
-              "genomes_base": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-test-${{ github.sha }}/references",
+              "hook_url": "${{ secrets.MEGATESTS_ALERTS_SLACK_HOOK_URL }}",
+              "genomes_base": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-${{ github.sha }}/references",
+              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-${{ github.sha }}",
               "velocity": true
             }
           profiles: test_full
