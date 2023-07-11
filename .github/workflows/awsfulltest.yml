@@ -14,14 +14,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Launch build-reference workflow via tower
-        uses: seqeralabs/action-tower-launch@v1
+        uses: seqeralabs/action-tower-launch@v2
         with:
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
+          revision: ${{ github.sha }}
           workdir: s3://${{ secrets.AWS_S3_BUCKET }}/work/marsseq/work-${{ github.sha }}
           parameters: |
             {
+              "hook_url": "${{ secrets.MEGATESTS_ALERTS_SLACK_HOOK_URL }}",
+              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-${{ github.sha }}"
               "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-test-${{ github.sha }}",
               "build_references": true,
               "velocity": true
@@ -45,8 +48,11 @@ jobs:
               "genomes_base": "s3://${{ secrets.AWS_S3_BUCKET }}/marsseq/results-test-${{ github.sha }}/references",
               "velocity": true
             }
-          profiles: test_full,aws_tower
+          profiles: test_full
+
       - uses: actions/upload-artifact@v3
         with:
           name: Tower debug log file
-          path: tower_action_*.log
+          path: |
+            tower_action_*.log
+            tower_action_*.json
