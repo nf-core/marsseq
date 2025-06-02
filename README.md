@@ -28,7 +28,7 @@
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-To run the pipeline you have create experiment metadata files:
+To run the pipeline you have to create experiment metadata files (see documentation for more details):
 
 - [amp_batches.xlsx](assets/amp_batches.xlsx)
 - [wells_cells.xlsx](assets/wells_cells.xlsx)

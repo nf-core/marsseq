@@ -6,8 +6,45 @@
 
 ## Introduction
 
-nf-core/marsseq is a pre-processing pipeline for MARS-seq experiments. We additionally introduce RNA velocity workflow that can be used to study
-cell dynamics along differentiation.
+nf-core/marsseq is a pre-processing pipeline for MARS-seq experiments. We additionally introduce RNA velocity workflow that can be used to study cell dynamics along differentiation.
+
+## Metadata information
+
+The pipeline requires 3 additional files for experiment.
+
+- [amp_batches.xlsx](../assets/amp_batches.xlsx)
+  - **Amp_batch_ID**: Amplification batch unique identifier
+  - **Seq_batch_ID**: The ID of the sequencing batch associated with this amplification batch
+  - **Protocol_version_ID**: `Mars_2` (do not change, will be deprecated in next release)
+  - **Pool_barcode**: Pool barcode sequence
+  - **R2_design**: `7W.8R` (do not change, used by `demultiplex.pl`)
+    - asdsa
+  - **Experiment_ID**: An experiment ID
+  - **Owner**: The person conducted the experiment
+  - **Description**: Description of amplification batch
+- [wells_cells.xlsx](../assets/wells_cells.xlsx)
+  - **Well_ID**: Well/Cell unique identifier
+  - **Well_coordinates**: The position of the well on the place (row & column, e.g. L23)
+  - **plate_ID**: The ID of the plate associated with this well
+  - **Subject_ID**: The ID of the subject that donated the cell for this well (e.g. mouse ID)
+  - **Amp_batch_ID**: The amplification batch associated with this well
+  - **Cell_barcode**: The well barcode sequence
+  - **Spike_type**: `ERCC_mix1` (do not change)
+  - **Spike_dilution**: `0.000025` (do not change unless required)
+  - **Spike_volume_ul**: `0.01` (do not change unless required)
+  - **Number_of_cells**: `1` (do not change unless required)
+  - **is_primer_added**: `1` (do not change unless required)
+- [seq_batches.xslx](../assets/seq_batches.xlsx)
+  - **Seq_batch_ID**: Sequencing batch Unique identifier
+  - **Run_name**: Short description
+  - **Date**: Date of sequencing
+  - **Genome_assembly**: Genome (not used in the pipeline, will be deprecated in next release)
+  - **Spike_type**: Usually "ERCC_mix1" (do not change)
+  - **R1_design**: `5I.4P.51M` (do not change, used by `demultiplex.pl`)
+    - Explanation: 5bps Ignore, 4bps Pool barcode, 51bps mRNA
+  - **Notes**: Additional notes (ignored in pipeline)
+
+For more examples please see [SB26](https://raw.githubusercontent.com/nf-core/test-datasets/marsseq/SB26.csv). The original documentation for MARS-seq2.0 can be found [here](https://tanaylab.github.io/old_resources/pages/672.html).
 
 ## Samplesheet input
 
