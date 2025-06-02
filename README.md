@@ -77,7 +77,9 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 ## Citations
 
-If you use nf-core/marsseq for your analysis, please cite it using the following doi: [10.5281/zenodo.8063539](https://doi.org/10.5281/zenodo.8063539)
+If you use nf-core/marsseq for your analysis, please cite the `nf-core/marsseq` article as follows:
+
+> Martin Proks, Jose Alejandro Romero Herrera, Jakub Sedzinski, Joshua M Brickman, nf-core/marsseq: systematic preprocessing pipeline for MARS-seq experiments, Bioinformatics Advances, Volume 5, Issue 1, 2025, vbaf089, https://doi.org/10.1093/bioadv/vbaf089
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
