@@ -41,11 +41,13 @@ Now, you can run the pipeline using:
 ```bash
 nextflow run nf-core/marsseq \
   -profile <docker/singularity/.../institute> \
-  --fasta https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M32/GRCm39.primary_assembly.genome.fa.gz \
-  --gtf https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M32/gencode.vM32.annotation.gtf.gz \
+  --fasta reference_fasta \
+  --gtf reference_gtf \
   --input samplesheet.csv \
   --outdir <OUTDIR>
 ```
+
+We recommend to use references from [GENCODE](https://www.gencodegenes.org).
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
