@@ -9,78 +9,94 @@
 ----------------------------------------------------------------------------------------
 */
 
-nextflow.enable.dsl = 2
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
+    IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-params.fasta         = WorkflowMain.getGenomeAttribute(params, 'fasta')
-params.gtf           = WorkflowMain.getGenomeAttribute(params, 'gtf')
-params.bowtie2_index = WorkflowMain.getGenomeAttribute(params, 'bowtie2')
-params.star_index    = WorkflowMain.getGenomeAttribute(params, 'star')
+include { MARSSEQ  } from './workflows/marsseq'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_marsseq_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_marsseq_pipeline'
+include { PREPARE_GENOME          } from './subworkflows/local/prepare_genome'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    VALIDATE & PRINT PARAMETER SUMMARY
+    NAMED WORKFLOWS FOR PIPELINE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-
-include { validateParameters; paramsHelp } from 'plugin/nf-validation'
-
-// Print help message if needed
-if (params.help) {
-    def logo = NfcoreTemplate.logo(workflow, params.monochrome_logs)
-    def citation = '\n' + WorkflowMain.citation(workflow) + '\n'
-    def String command = "nextflow run ${workflow.manifest.name} --input samplesheet.csv --genome mm10 -profile docker"
-    log.info logo + paramsHelp(command) + citation + NfcoreTemplate.dashedLine(params.monochrome_logs)
-    System.exit(0)
-}
-
-WorkflowMain.initialise(workflow, params, log)
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    NAMED WORKFLOW FOR PIPELINE
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-include { BUILD_REFERENCES } from './workflows/build_references'
-include { MARSSEQ          } from './workflows/marsseq'
 
 //
-// WORKFLOW: Run main nf-core/marsseq analysis pipeline
+// WORKFLOW: Run main analysis pipeline depending on type of input
 //
 workflow NFCORE_MARSSEQ {
 
-    if (params.build_references) {
-        BUILD_REFERENCES ()
-    } else {
+    take:
+    samplesheet // channel: samplesheet read in from --input
 
-        // Validate input parameters
-        if (params.validate_params) {
-            validateParameters()
-        }
+    main:
 
-        MARSSEQ ()
-    }
+    PREPARE_GENOME (
+        params.aligner,
+        params.fasta,
+        params.gtf,
+        params.bowtie2_index,
+        params.star_index
+    )
 
+    MARSSEQ (
+        samplesheet,
+        params.aligner,
+        PREPARE_GENOME.out.fasta,
+        PREPARE_GENOME.out.gtf,
+        PREPARE_GENOME.out.bowtie2_index,
+        PREPARE_GENOME.out.star_index,
+        PREPARE_GENOME.out.versions
+    )
+
+    emit:
+    multiqc_report = MARSSEQ.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    RUN ALL WORKFLOWS
+    RUN MAIN WORKFLOW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//
-// WORKFLOW: Execute a single named workflow for the pipeline
-// See: https://github.com/nf-core/rnaseq/issues/619
-//
 workflow {
-    NFCORE_MARSSEQ ()
+
+    main:
+    //
+    // SUBWORKFLOW: Run initialisation tasks
+    //
+    PIPELINE_INITIALISATION (
+        params.version,
+        params.validate_params,
+        params.monochrome_logs,
+        args,
+        params.outdir,
+        params.input
+    )
+
+    //
+    // WORKFLOW: Run main workflow
+    //
+    NFCORE_MARSSEQ (
+        PIPELINE_INITIALISATION.out.samplesheet
+    )
+
+    //
+    // SUBWORKFLOW: Run completion tasks
+    //
+    PIPELINE_COMPLETION (
+        params.email,
+        params.email_on_fail,
+        params.plaintext_email,
+        params.outdir,
+        params.monochrome_logs,
+        params.hook_url,
+        NFCORE_MARSSEQ.out.multiqc_report
+    )
 }
 
 /*

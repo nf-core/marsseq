@@ -7,6 +7,7 @@ import multiprocessing as mp
 import os
 import sys
 from gzip import open as gzopen
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
@@ -50,8 +51,12 @@ def trim_cdna(r1: List[str]) -> Tuple[str, str]:
 
     # [0]: header, [1]: seq, [2]: quality
     _, seq, qa = r1
-    cdna: str = seq[(config["LEFT_ADAPTER"] + config["POOL_BARCODE"]) : -config["RIGHT_ADAPTER"]]
-    cdna_quality: str = qa[(config["LEFT_ADAPTER"] + config["POOL_BARCODE"]) : -config["RIGHT_ADAPTER"]]
+    cdna: str = seq[
+        (config["LEFT_ADAPTER"] + config["POOL_BARCODE"]) : -config["RIGHT_ADAPTER"]
+    ]
+    cdna_quality: str = qa[
+        (config["LEFT_ADAPTER"] + config["POOL_BARCODE"]) : -config["RIGHT_ADAPTER"]
+    ]
 
     return cdna, cdna_quality
 
@@ -75,8 +80,12 @@ def create_r2(r1: FastqGeneralIterator, r2: FastqGeneralIterator) -> Tuple[str, 
     _, r2_seq, r2_qa = r2
 
     # get pool barcode
-    pb_seq: str = r1_seq[config["LEFT_ADAPTER"] : config["LEFT_ADAPTER"] + config["POOL_BARCODE"]]
-    pb_qa: str = r1_qa[config["LEFT_ADAPTER"] : config["LEFT_ADAPTER"] + config["POOL_BARCODE"]]
+    pb_seq: str = r1_seq[
+        config["LEFT_ADAPTER"] : config["LEFT_ADAPTER"] + config["POOL_BARCODE"]
+    ]
+    pb_qa: str = r1_qa[
+        config["LEFT_ADAPTER"] : config["LEFT_ADAPTER"] + config["POOL_BARCODE"]
+    ]
 
     barcode_len: int = config["POOL_BARCODE"] + config["CELL_BARCODE"] + config["UMI"]
     barcode_seq: str = f"{pb_seq}{r2_seq}"[:barcode_len]
@@ -85,17 +94,20 @@ def create_r2(r1: FastqGeneralIterator, r2: FastqGeneralIterator) -> Tuple[str, 
     return barcode_seq, barcode_qa
 
 
-def convert_to_10x(params: Tuple[str, str, str, str], chunk_size: int = 100) -> None:
+def convert_to_10x(params: Tuple[str, str, str], chunk_size: int = 1024) -> None:
     """Main function processing the reads.
 
     Args:
-        params (Tuple[str, str, str, str]): R1, R2, input, output folder
+        params (Tuple[str, str, str]): R1, R2, output folder
     """
-    fastq_r1, fastq_r2, input_folder, output_folder = params
+    fastq_r1, fastq_r2, output_folder = params
 
-    with gzopen(fastq_r1, "rt") as fq_r1, gzopen(fastq_r2, "rt") as fq_r2, gzopen(
-        f"{output_folder}/{os.path.basename(fastq_r1)}", "wt"
-    ) as fastq_r1_out, gzopen(f"{output_folder}/{os.path.basename(fastq_r2)}", "wt") as fastq_r2_out:
+    with (
+        gzopen(fastq_r1, "rt") as fq_r1,
+        gzopen(fastq_r2, "rt") as fq_r2,
+        gzopen(f"{output_folder}/{os.path.basename(fastq_r1)}", "wt") as fastq_r1_out,
+        gzopen(f"{output_folder}/{os.path.basename(fastq_r2)}", "wt") as fastq_r2_out,
+    ):
         fastq_r1 = FastqGeneralIterator(fq_r1)
         fastq_r2 = FastqGeneralIterator(fq_r2)
 
@@ -108,7 +120,9 @@ def convert_to_10x(params: Tuple[str, str, str, str], chunk_size: int = 100) -> 
             barcode, barcode_quality = create_r2(r1, r2)
 
             fastq_r1_content += f'@{r1[0]}:{config["DEFAULT_SAMPLE_NAME"]}\n{barcode}\n+\n{barcode_quality}\n'
-            fastq_r2_content += f'@{r2[0]}:{config["DEFAULT_SAMPLE_NAME"]}\n{cdna}\n+\n{cdna_quality}\n'
+            fastq_r2_content += (
+                f'@{r2[0]}:{config["DEFAULT_SAMPLE_NAME"]}\n{cdna}\n+\n{cdna_quality}\n'
+            )
 
             if counter % chunk_size == 0:
                 fastq_r1_out.write(fastq_r1_content)
@@ -136,17 +150,38 @@ def convert(fastqs_folder: str, output_folder: str, threads: int):
     r2_files = sorted(glob.glob(f"{fastqs_folder}/*R2*.fastq.gz"))
 
     if len(r1_files) != len(r2_files):
-        print(f"Something is off, please check you have the same amount of paired-end files!")
+        print(
+            f"Something is off, please check you have the same amount of paired-end files!"
+        )
         sys.exit(-1)
 
     data = zip(
         r1_files,
         r2_files,
-        itertools.repeat(fastqs_folder, len(r1_files)),
         itertools.repeat(output_folder, len(r1_files)),
     )
     with mp.Pool(threads) as pool:
         _ = pool.map(convert_to_10x, data)
+
+
+def convert_read(fastq_r1: str, fastq_r2: str, output_folder: str):
+    """Main function for converting pair of MARS-seq read to 10X format.
+
+    Args:
+        fastq_r1 (str): Input R1 FASTQ
+        fastq_r2 (str): Input R2 FASTQ
+        output_folder (str): Output folder
+    """
+
+    if not Path(fastq_r1).exists():
+        raise ValueError(f"Provided R1 {fastq_r1} does not exist!")
+
+    if not Path(fastq_r2).exists():
+        raise ValueError(f"Provided R2 {fastq_r2} does not exist!")
+
+    check_folder(output_folder)
+
+    convert_to_10x((fastq_r1, fastq_r2, output_folder))
 
 
 def whitelist(batch: str, amp_batches: str, well_cells: str):
@@ -169,7 +204,9 @@ def whitelist(batch: str, amp_batches: str, well_cells: str):
     wells["Cell_barcode"] = wells["Cell_barcode"].str.strip().astype("category")
 
     # merge and concat barcodes
-    wells["Amp_batch_ID"] = wells["Amp_batch_ID"].cat.rename_categories(batches.Pool_barcode.unique())
+    wells["Amp_batch_ID"] = wells["Amp_batch_ID"].cat.rename_categories(
+        batches.Pool_barcode.unique()
+    )
     wells["whitelist"] = wells[["Amp_batch_ID", "Cell_barcode"]].agg("".join, axis=1)
 
     # save
@@ -180,27 +217,57 @@ if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
     formatter = logging.Formatter("%(asctime)s  %(message)s", "%d-%m-%Y %H:%M:%S")
 
-    arg_parser = argparse.ArgumentParser(description="Plugin for converting and running velocity on MARS-seq v2.")
+    arg_parser = argparse.ArgumentParser(
+        description="Plugin for converting and running velocity on MARS-seq v2."
+    )
 
-    arg_parser.add_argument("--version", "-v", action="version", version=f"velocity 0.1")
+    arg_parser.add_argument(
+        "--version", "-v", action="version", version=f"velocity 0.2"
+    )
     command_parser = arg_parser.add_subparsers(dest="command")
 
     # convert
-    convert_parser = command_parser.add_parser("convert", help="Convert reads to 10X format")
-    convert_parser.add_argument("--input", type=str, help="Input folder with fastq files", required=True)
-    convert_parser.add_argument("--output", type=str, help="Output folder", required=True)
-    convert_parser.add_argument("--threads", type=int, help="Number of threads", required=True, default=4)
+    convert_parser = command_parser.add_parser(
+        "convert", help="Convert reads to 10X format"
+    )
+    convert_parser.add_argument(
+        "--input", type=str, help="Input folder with fastq files", required=True
+    )
+    convert_parser.add_argument(
+        "--output", type=str, help="Output folder", required=True
+    )
+    convert_parser.add_argument(
+        "--threads", type=int, help="Number of threads", required=True, default=4
+    )
+
+    # convert_read
+    convert_read_parser = command_parser.add_parser(
+        "convert_read", help="Convert one MARS-seq read into 10X format"
+    )
+    convert_read_parser.add_argument("--r1", type=str, help="Input R1", required=True)
+    convert_read_parser.add_argument("--r2", type=str, help="Input R2", required=True)
+    convert_read_parser.add_argument(
+        "--output", type=str, help="Output folder", required=True
+    )
 
     # whitelist
-    whitelist_parser = command_parser.add_parser("whitelist", help="Create whitelist for StarSolo.")
+    whitelist_parser = command_parser.add_parser(
+        "whitelist", help="Create whitelist for StarSolo."
+    )
     whitelist_parser.add_argument("--batch", type=str, help="Batch name", required=True)
-    whitelist_parser.add_argument("--amp_batches", type=str, help="Amplification batches [xls]", required=True)
-    whitelist_parser.add_argument("--well_cells", type=str, help="Well cells [xls]", required=True)
+    whitelist_parser.add_argument(
+        "--amp_batches", type=str, help="Amplification batches [xls]", required=True
+    )
+    whitelist_parser.add_argument(
+        "--well_cells", type=str, help="Well cells [xls]", required=True
+    )
 
     args = arg_parser.parse_args()
 
     if args.command == "convert":
         convert(args.input, args.output, args.threads)
+    if args.command == "convert_read":
+        convert_read(args.r1, args.r2, args.output)
     elif args.command == "whitelist":
         whitelist(args.batch, args.amp_batches, args.well_cells)
     else:

@@ -8,24 +8,23 @@ include { QC_ALIGNED    } from '../../modules/local/qc/align/main'
 
 workflow ALIGN_READS {
     take:
-    reads   // channel [ meta, reads ]
-    index   // channel file(bowtie2 index)
-    qc      // channel file(*.txt)
+    reads   // channel: [ meta, reads ]
+    index   // channel: [ index ]
+    fasta   // channel: [ meta, fasta ]
+    qc      // channel: [ file(*.txt) ]
 
     main:
     ch_versions = Channel.empty()
     ch_reads = reads
         .map { meta, reads -> [ [ "id": meta.id, "single_end": true, "filename": reads.baseName ], reads ]}
-    ch_index = ch_reads
-        .map { meta, reads -> [ meta, index ] }
 
-    BOWTIE2_ALIGN ( ch_reads, ch_index, false, false )
+    BOWTIE2_ALIGN ( ch_reads, index, fasta, false, false )
     ch_versions = ch_versions.mix(BOWTIE2_ALIGN.out.versions)
 
-    QC_ALIGNED ( BOWTIE2_ALIGN.out.aligned, qc )
+    QC_ALIGNED ( BOWTIE2_ALIGN.out.sam, qc )
     ch_versions = ch_versions.mix(QC_ALIGNED.out.versions)
 
-    CUT_SAM ( BOWTIE2_ALIGN.out.aligned )
+    CUT_SAM ( BOWTIE2_ALIGN.out.sam )
     ch_versions = ch_versions.mix(CUT_SAM.out.versions)
 
     emit:

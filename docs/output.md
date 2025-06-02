@@ -10,7 +10,7 @@ The directories listed below will be created in the results directory after the 
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
-- [Download and build references](#download-and-build-references) - Build references needer to run the pipeline
+- [Prepare genome](#prepare-genome) - Build references needer to run the pipeline
 - [Prepare pipeline](#prepare-pipeline)
 - [Label reads](#label-reads)
 - [Align reads](#align-preads)
@@ -26,54 +26,34 @@ The pipeline is executed per `Batch` and therefore the folder structure looks li
 
 ```console
 results/
-|-- multiqc
-|-- pipeline_info
-|-- references
-`-- <batch>
+├── multiqc
+├── pipeline_info
+├── references
+└── SB26
+    ├── data
+    ├── fastqc
+    ├── output
+    ├── QC
+    ├── SB26.sam
+    └── velocity
 ```
 
-## Download and build references
+## Prepare genome
 
-<details markdown="1">
-<summary>Output files</summary>
+The pipeline requires ERCC (spike-ins) to be included in the reference genome. To
+accomdate this, the pipeline requires `fasta` and `gtf` reference files. We recommend
+using files from [GENCODE](https://www.gencodegenes.org). Reference indexes are built
+based on set `--aligner` parameter.
 
 ```console
-.
-└── <genome>
-    ├── bowtie2
-    │   ├── <genome>.1.bt2
-    │   ├── <genome>.2.bt2
-    │   ├── <genome>.3.bt2
-    │   ├── <genome>.4.bt2
-    │   ├── <genome>.rev.1.bt2
-    │   └── <genome>.rev.2.bt2
-    ├── <genome>.fa
-    ├── <genome>.gtf
-    ├── star
-    │   ├── chrLength.txt
-    │   ├── chrNameLength.txt
-    │   ├── chrName.txt
-    │   ├── chrStart.txt
-    │   ├── exonGeTrInfo.tab
-    │   ├── exonInfo.tab
-    │   ├── geneInfo.tab
-    │   ├── Genome
-    │   ├── genomeParameters.txt
-    │   ├── Log.out
-    │   ├── SA
-    │   ├── SAindex
-    │   ├── sjdbInfo.txt
-    │   ├── sjdbList.fromGTF.out.tab
-    │   ├── sjdbList.out.tab
-    │   └── transcriptInfo.tab
-    └── versions.yml
+results/references
+├── bowtie2
+├── gencode.vM32.annotation.gtf
+├── GRCm39.primary_assembly.genome_ercc.fa
+├── GRCm39.primary_assembly.genome.fa
+├── star
+└── versions.yml
 ```
-
-</details>
-
-The pipeline downloads references from GENCODE database. This is required, because
-the MARS-seq is using ERCC spike-ins, which have to be appended. Next it builds
-bowtie2 index. If `--velocity` flag is set, star index is also built.
 
 ## Prepare pipeline
 
@@ -85,7 +65,6 @@ bowtie2 index. If `--velocity` flag is set, star index is also built.
   - `gene_intervals.txt`: Information about gene (chromosome, start, end, strand and symbol)
   - `seq_batches.txt`: Sequencing batches
   - `wells_cells.txt`: Well cells
-  - `*fastq.gz`: Raw reads
 
 </details>
 
@@ -121,11 +100,11 @@ folder.
 Split reads are aligned using `bowtie2`. Next, all the aligned reads are merged
 into one `SAM` file which is used as an input for demultiplexing.
 
-If `--velocity` flag is set, the reads are also aligned using `StarSolo` to estimated
-both spliced and unspliced reads which can be used for RNA velocity estimation.
-This is an additional plugin which we developed. In short MARS-seq2.0 reads are
-converted to `10X v2` format. Additionally, a whitelist is generated for aligned
-to perform demultiplexing.
+If `--aligner` flag is set to `bowtie2_star` or `star`, the reads are also aligned
+using `StarSolo` to estimated both spliced and unspliced reads which can be used
+for RNA velocity estimation. This is an additional plugin which we developed.
+In short MARS-seq2.0 reads are converted to `10X v2` format. Additionally, a
+whitelist is generated for aligned to perform demultiplexing.
 
 <details markdown="1">
 <summary>Output files</summary>
@@ -133,13 +112,11 @@ to perform demultiplexing.
 - `<batch>`
   - `<batch>.sam`: Merged aligned reads into one SAM file with `bowtie2`
   - `velocity/`
-    - `Solo.out/*`: Output from StarSolo (Gene, GeneFull, SJ, Velocyto and Barcode.stats)
-    - `Aligned.sortedByCoord.out.bam`: Aligned reads
-    - `Log.final.out`: STAR alignment report containing the mapping results summary
-    - `Log.out` and `Log.progress.out`: STAR log files containing detailed information about the run. Typically only useful for debugging purposes
-    - `<batch>.cutadapt.log`: Log file from running `cutadapt`
     - `<batch>_{1,2}.trim.fastq.gz`: Trimmed pair-end converted `10X v2` reads
-    - `SJ.out.tab`: File containing filtered splice junctions detected after mapping the reads
+    - `<batch>.cutadapt.log`: Log file from running `cutadapt`
+    - `<batch>.Log.final.out`: STAR alignment report containing the mapping results summary
+    - `<batch>.Log.out` and `<batch>.Log.progress.out`: STAR log files containing detailed information about the run. Typically only useful for debugging purposes
+    - `<batch>.Solo.out/*`: Output from StarSolo (Gene, GeneFull, SJ, Velocyto and Barcode.stats)
     - `whitelist.txt`: File containing cell barcodes (combination of pool and cell barcode)
 
 </details>
@@ -194,14 +171,6 @@ Internal script for generating QC report after `bowtie2` alignment and demultipl
 
 [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) gives general quality metrics about your sequenced reads. It provides information about the quality score distribution across your reads, per base sequence content (%A/T/G/C), adapter contamination and overrepresented sequences. For further reading and documentation see the [FastQC help pages](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/).
 
-![MultiQC - FastQC sequence counts plot](images/mqc_fastqc_counts.png)
-
-![MultiQC - FastQC mean quality scores plot](images/mqc_fastqc_quality.png)
-
-![MultiQC - FastQC adapter content plot](images/mqc_fastqc_adapter.png)
-
-> **NB:** The FastQC plots displayed in the MultiQC report shows _untrimmed_ reads. They may contain adapter sequence and potentially regions with low quality.
-
 ### MultiQC
 
 <details markdown="1">
@@ -229,6 +198,7 @@ Results generated by MultiQC collate pipeline QC from supported tools e.g. FastQ
   - Reports generated by Nextflow: `execution_report.html`, `execution_timeline.html`, `execution_trace.txt` and `pipeline_dag.dot`/`pipeline_dag.svg`.
   - Reports generated by the pipeline: `pipeline_report.html`, `pipeline_report.txt` and `software_versions.yml`. The `pipeline_report*` files will only be present if the `--email` / `--email_on_fail` parameter's are used when running the pipeline.
   - Reformatted samplesheet files used as input to the pipeline: `samplesheet.valid.csv`.
+  - Parameters used by the pipeline run: `params.json`.
 
 </details>
 

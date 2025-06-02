@@ -11,7 +11,7 @@ workflow PREPARE_PIPELINE {
     amp_batches   // channel: amp_batch
     seq_batches   // channel: seq_batch
     well_cells    // channel: well_cells
-    gtf           // channel: gtf
+    gtf           // channel: [ meta, file(gtf) ]
     ercc_regions  // channel: ercc_regions
     reads         // channel: [ val(meta), [ reads ] ]
 
@@ -24,7 +24,7 @@ workflow PREPARE_PIPELINE {
         amp_batches,
         seq_batches,
         well_cells,
-        gtf,
+        gtf.map { it[1] },
         ercc_regions,
         reads
     )

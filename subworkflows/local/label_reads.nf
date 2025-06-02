@@ -6,12 +6,13 @@ include { EXTRACT_LABELS } from '../../modules/local/extract/main'
 
 workflow LABEL_READS {
     take:
-    oligos      // channel oligos.txt
-    amp_batches // channel amp_batches.txt
-    seq_batches // channel seq_batches.txt
+    oligos      // channel: oligos.txt
+    amp_batches // channel: amp_batches.txt
+    seq_batches // channel: seq_batches.txt
     fastp_reads // channel: [ val(meta), [ reads ] ]
 
     main:
+
     ch_reads = fastp_reads
         .map { meta, reads -> return [ meta, reads.sort().collate(2) ] }
         .transpose()

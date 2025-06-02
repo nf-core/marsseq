@@ -6,7 +6,7 @@ process EXTRACT_LABELS {
     tag "$meta.id"
     label 'process_medium'
 
-    conda "bioconda::conda-forge==5.30.0"
+    conda "conda-forge::perl==5.26.2 conda-forge::grep=3.11 conda-forge::sed=4.8 conda-forge::tar=1.34"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/ubuntu:20.04' :
         'nf-core/ubuntu:20.04' }"

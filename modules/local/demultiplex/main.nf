@@ -7,7 +7,7 @@ process DEMULTIPLEX {
     tag "$meta.id [$meta.amp_batch]"
     label 'process_medium'
 
-    conda "bioconda::conda-forge==5.30.0"
+    conda "conda-forge::perl==5.26.2"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/ubuntu:20.04' :
         'nf-core/ubuntu:20.04' }"

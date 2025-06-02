@@ -11,7 +11,7 @@ process PREPARE {
     tag "$meta.id"
     label 'process_tiny'
 
-    conda "bioconda::openpyxl==2.6.1 conda-forge::pandas==1.2.4 conda-forge::fsspec==2023.5.0"
+    conda "anaconda::openpyxl==2.6.1 conda-forge::pandas==1.2.4 conda-forge::fsspec==2023.5.0"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/mulled-v2-0bcca2890a3ab7be29a83e813a02d340d6f54660:4cb478c6e57df2ef85ea5f8eae6d717c017962cd-0' :
         'biocontainers/mulled-v2-0bcca2890a3ab7be29a83e813a02d340d6f54660:4cb478c6e57df2ef85ea5f8eae6d717c017962cd-0' }"

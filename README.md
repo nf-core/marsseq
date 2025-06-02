@@ -1,12 +1,19 @@
-# ![nf-core/marsseq](docs/images/nf-core-marsseq_logo_light.png#gh-light-mode-only) ![nf-core/marsseq](docs/images/nf-core-marsseq_logo_dark.png#gh-dark-mode-only)
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/nf-core-marsseq_logo_dark.png">
+    <img alt="nf-core/marsseq" src="docs/images/nf-core-marsseq_logo_light.png">
+  </picture>
+</h1>
 
-[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/marsseq/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.8063539-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.8063539)
+[![GitHub Actions CI Status](https://github.com/nf-core/marsseq/actions/workflows/ci.yml/badge.svg)](https://github.com/nf-core/marsseq/actions/workflows/ci.yml)
+[![GitHub Actions Linting Status](https://github.com/nf-core/marsseq/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/marsseq/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/marsseq/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.8063539-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.8063539)
+[![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
-[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A523.04.0-23aa62.svg)](https://www.nextflow.io/)
+[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.04.2-23aa62.svg)](https://www.nextflow.io/)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
-[![Launch on Nextflow Tower](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Nextflow%20Tower-%234256e7)](https://tower.nf/launch?pipeline=https://github.com/nf-core/marsseq)
+[![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/nf-core/marsseq)
 
 [![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23marsseq-4A154B?labelColor=000000&logo=slack)](https://nfcore.slack.com/channels/marsseq)[![Follow on Twitter](http://img.shields.io/badge/twitter-%40nf__core-1DA1F2?labelColor=000000&logo=twitter)](https://twitter.com/nf_core)[![Follow on Mastodon](https://img.shields.io/badge/mastodon-nf__core-6364ff?labelColor=FFFFFF&logo=mastodon)](https://mstdn.science/@nf_core)[![Watch on YouTube](http://img.shields.io/badge/youtube-nf--core-FF0000?labelColor=000000&logo=youtube)](https://www.youtube.com/c/nf-core)
 
@@ -18,12 +25,10 @@
 
 ## Usage
 
-> **Note**
-> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how
-> to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline)
-> with `-profile test` before running the workflow on actual data.
+> [!NOTE]
+> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-To run the pipeline you have create experiment metadata files:
+To run the pipeline you have to create experiment metadata files (see documentation for more details):
 
 - [amp_batches.xlsx](assets/amp_batches.xlsx)
 - [wells_cells.xlsx](assets/wells_cells.xlsx)
@@ -31,31 +36,21 @@ To run the pipeline you have create experiment metadata files:
 
 and samplesheet (`samplesheet.csv`). We provide test example [here](assets/samplesheet.csv).
 
-Next, you have to generate genome references to incorporate ERCC spike-ins. References are downloaded from [GENCODE](https://www.gencodegenes.org) database.
-
-```bash
-nextflow run nf-core/marsseq \
-  -profile <docker/singularity/.../institute> \
-  --genome <mm10,mm9,GRCh38_v43> \
-  --build_references \
-  --input samplsheet.csv \
-  --outdir <OUTDIR>
-```
-
 Now, you can run the pipeline using:
 
 ```bash
 nextflow run nf-core/marsseq \
   -profile <docker/singularity/.../institute> \
-  --genome <mm10,mm9,GRCh38_v43> \
+  --fasta reference_fasta \
+  --gtf reference_gtf \
   --input samplesheet.csv \
   --outdir <OUTDIR>
 ```
 
-> **Warning:**
-> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those
-> provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
-> see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
+We recommend to use references from [GENCODE](https://www.gencodegenes.org).
+
+> [!WARNING]
+> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
 For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/marsseq/usage) and the [parameter documentation](https://nf-co.re/marsseq/parameters).
 
@@ -84,7 +79,9 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 ## Citations
 
-If you use nf-core/marsseq for your analysis, please cite it using the following doi: [10.5281/zenodo.8063539](https://doi.org/10.5281/zenodo.8063539)
+If you use nf-core/marsseq for your analysis, please cite the `nf-core/marsseq` article as follows:
+
+> Martin Proks, Jose Alejandro Romero Herrera, Jakub Sedzinski, Joshua M Brickman, nf-core/marsseq: systematic preprocessing pipeline for MARS-seq experiments, Bioinformatics Advances, Volume 5, Issue 1, 2025, vbaf089, https://doi.org/10.1093/bioadv/vbaf089
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
