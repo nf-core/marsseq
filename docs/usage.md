@@ -6,49 +6,88 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+nf-core/marsseq is a pre-processing pipeline for MARS-seq experiments. We additionally introduce RNA velocity workflow that can be used to study cell dynamics along differentiation.
+
+## Metadata information
+
+The pipeline requires 3 additional files for experiment.
+
+- [amp_batches.xlsx](../assets/amp_batches.xlsx)
+  - **Amp_batch_ID**: Amplification batch unique identifier
+  - **Seq_batch_ID**: The ID of the sequencing batch associated with this amplification batch
+  - **Protocol_version_ID**: `Mars_2` (do not change, will be deprecated in next release)
+  - **Pool_barcode**: Pool barcode sequence
+  - **R2_design**: `7W.8R` (do not change, used by `demultiplex.pl`)
+    - asdsa
+  - **Experiment_ID**: An experiment ID
+  - **Owner**: The person conducted the experiment
+  - **Description**: Description of amplification batch
+- [wells_cells.xlsx](../assets/wells_cells.xlsx)
+  - **Well_ID**: Well/Cell unique identifier
+  - **Well_coordinates**: The position of the well on the place (row & column, e.g. L23)
+  - **plate_ID**: The ID of the plate associated with this well
+  - **Subject_ID**: The ID of the subject that donated the cell for this well (e.g. mouse ID)
+  - **Amp_batch_ID**: The amplification batch associated with this well
+  - **Cell_barcode**: The well barcode sequence
+  - **Spike_type**: `ERCC_mix1` (do not change)
+  - **Spike_dilution**: `0.000025` (do not change unless required)
+  - **Spike_volume_ul**: `0.01` (do not change unless required)
+  - **Number_of_cells**: `1` (do not change unless required)
+  - **is_primer_added**: `1` (do not change unless required)
+- [seq_batches.xslx](../assets/seq_batches.xlsx)
+  - **Seq_batch_ID**: Sequencing batch Unique identifier
+  - **Run_name**: Short description
+  - **Date**: Date of sequencing
+  - **Genome_assembly**: Genome (not used in the pipeline, will be deprecated in next release)
+  - **Spike_type**: Usually "ERCC_mix1" (do not change)
+  - **R1_design**: `5I.4P.51M` (do not change, used by `demultiplex.pl`)
+    - Explanation: 5bps Ignore, 4bps Pool barcode, 51bps mRNA
+  - **Notes**: Additional notes (ignored in pipeline)
+
+For more examples please see [SB26](https://raw.githubusercontent.com/nf-core/test-datasets/marsseq/SB26.csv). The original documentation for MARS-seq2.0 can be found [here](https://tanaylab.github.io/old_resources/pages/672.html).
 
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create a samplesheet with information about the batch you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 6 columns, and a header row as shown in the examples below.
 
 ```bash
 --input '[path to samplesheet file]'
 ```
 
-### Multiple runs of the same sample
-
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
-
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
-```
-
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+Each sequencing batch consists of multiple amplification batches. Therefore the
+pipeline supports running only one batch, meaning one has to create a separate
+samplesheet for each invididual batch.
 
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
+Example for test sequencing batch (`SB26`).
 
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+```console
+batch,fastq_1,fastq_2,amp_batches,seq_batches,well_cells
+SB26,Undetermined_S0_L001_R1_001.fastq.gz,Undetermined_S0_L001_R2_001.fastq.gz,amp_batches.xlsx,seq_batches.xlsx,wells_cells.xlsx
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+Example for test sequencing batch (`SB28`).
+
+```console
+batch,fastq_1,fastq_2,amp_batches,seq_batches,well_cells
+SB28,Undetermined_S0_L001_R1_001.fastq.gz,Undetermined_S0_L001_R2_001.fastq.gz,amp_batches.xlsx,seq_batches.xlsx,wells_cells.xlsx
+```
+
+| Column        | Description                                                                                                                |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `sample`      | Custom batch name.                                                                                                         |
+| `fastq_1`     | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz". |
+| `fastq_2`     | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz". |
+| `amp_batches` | Information about amplification batch                                                                                      |
+| `seq_batches` | Information about the sequencing batch                                                                                     |
+| `well_cells`  | Information about individual sorted cell                                                                                   |
+
+We provide an excel templates for each file:
+
+- [amp_batches.xlsx](../assets/amp_batches.xlsx)
+- [wells_cells.xlsx](../assets/wells_cells.xlsx)
+- [seq_batches.xslx](../assets/seq_batches.xlsx)
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
@@ -57,7 +96,7 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/marsseq --input ./samplesheet.csv --outdir ./results --genome GRCh37 -profile docker
+nextflow run nf-core/marsseq --input ./samplesheet.csv --outdir ./results --fasta genome.fasta --gtf annotation.gtf -profile docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
@@ -89,7 +128,8 @@ with:
 ```yaml title="params.yaml"
 input: './samplesheet.csv'
 outdir: './results/'
-genome: 'GRCh37'
+fasta: 'genome.fasta'
+gtf: 'annotation.gtf'
 <...>
 ```
 

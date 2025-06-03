@@ -1,0 +1,53 @@
+name: wget
+description: write your description here
+keywords:
+  - sort
+tools:
+  - wget:
+      description: Wget module for downloading files.
+      homepage: https://www.gnu.org/software/wget/
+      documentation: https://www.gnu.org/software/wget/manual/
+      tool_dev_url: https://ftp.gnu.org/gnu/wget/
+      doi: ""
+      licence: ["GPL v3"]
+
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - url:
+      type: string
+      description: URL link of the desired file.
+  - file_path:
+      type: string
+      description: Full path to filename
+  - extension:
+      type: string
+      description: Filename extesion like for example ".gz"
+
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+  - output:
+      type: file
+      description: File containing output
+      pattern: "*"
+
+  - file:
+      type: file
+      description: Path to any file downloaded
+      pattern: "*"
+
+authors:
+  - "@matq007"

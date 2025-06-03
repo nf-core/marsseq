@@ -18,18 +18,7 @@
 include { MARSSEQ  } from './workflows/marsseq'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_marsseq_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_marsseq_pipeline'
-include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_marsseq_pipeline'
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-// TODO nf-core: Remove this line if you don't need a FASTA file
-//   This is an example of how to use getGenomeAttribute() to fetch parameters
-//   from igenomes.config using `--genome`
-params.fasta = getGenomeAttribute('fasta')
+include { PREPARE_GENOME          } from './subworkflows/local/prepare_genome'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -47,12 +36,24 @@ workflow NFCORE_MARSSEQ {
 
     main:
 
-    //
-    // WORKFLOW: Run pipeline
-    //
-    MARSSEQ (
-        samplesheet
+    PREPARE_GENOME (
+        params.aligner,
+        params.fasta,
+        params.gtf,
+        params.bowtie2_index,
+        params.star_index
     )
+
+    MARSSEQ (
+        samplesheet,
+        params.aligner,
+        PREPARE_GENOME.out.fasta,
+        PREPARE_GENOME.out.gtf,
+        PREPARE_GENOME.out.bowtie2_index,
+        PREPARE_GENOME.out.star_index,
+        PREPARE_GENOME.out.versions
+    )
+
     emit:
     multiqc_report = MARSSEQ.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
@@ -83,6 +84,7 @@ workflow {
     NFCORE_MARSSEQ (
         PIPELINE_INITIALISATION.out.samplesheet
     )
+
     //
     // SUBWORKFLOW: Run completion tasks
     //

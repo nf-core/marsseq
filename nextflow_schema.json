@@ -51,9 +51,9 @@
             "properties": {
                 "genome": {
                     "type": "string",
-                    "description": "Name of iGenomes reference.",
+                    "description": "Name of Genomes reference.",
                     "fa_icon": "fas fa-book",
-                    "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
+                    "help_text": "Currently supported mouse: `mm9`, `mm10` and human `GRCh38_v43`. The references are downloaded from [GENCODE](https://www.gencodegenes.org) database."
                 },
                 "fasta": {
                     "type": "string",
@@ -62,8 +62,32 @@
                     "mimetype": "text/plain",
                     "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
                     "description": "Path to FASTA genome file.",
-                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified",
                     "fa_icon": "far fa-file-code"
+                },
+                "gtf": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/plain",
+                    "pattern": "^\\S+\\.gtf(\\.gz)?$",
+                    "description": "Path to GTF annotation file.",
+                    "fa_icon": "fas fa-code-branch",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified."
+                },
+                "bowtie2_index": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Path to BOWTIE2 index.",
+                    "fa_icon": "fas fa-code-branch",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified."
+                },
+                "star_index": {
+                    "type": "string",
+                    "format": "path",
+                    "exists": true,
+                    "fa_icon": "fas fa-bezier-curve",
+                    "description": "Path to directory or tar.gz archive for pre-built STAR index."
                 },
                 "igenomes_ignore": {
                     "type": "boolean",
@@ -79,6 +103,45 @@
                     "fa_icon": "fas fa-ban",
                     "hidden": true,
                     "default": "s3://ngi-igenomes/igenomes/"
+                }
+            }
+        },
+        "alignment_options": {
+            "title": "Alignment options",
+            "type": "object",
+            "fa_icon": "fas fa-map-signs",
+            "description": "Options to adjust parameters and filtering criteria for read alignments.",
+            "properties": {
+                "aligner": {
+                    "type": "string",
+                    "default": "bowtie2_star",
+                    "description": "Specifies the alignment algorithm to use - available options are 'bowtie2_star', 'bowtie2' and 'star'.",
+                    "fa_icon": "fas fa-map-signs",
+                    "enum": ["bowtie2_star", "bowtie2", "star"]
+                },
+                "read_length": {
+                    "type": "integer",
+                    "default": 75,
+                    "description": "Raw read length",
+                    "fa_icon": "fas fa-ruler-horizontal"
+                }
+            }
+        },
+        "process_skipping_options": {
+            "title": "Process skipping options",
+            "type": "object",
+            "fa_icon": "fas fa-fast-forward",
+            "description": "Options to skip various steps within the workflow.",
+            "properties": {
+                "skip_fastqc": {
+                    "type": "boolean",
+                    "description": "Skip FastQC.",
+                    "fa_icon": "fas fa-fast-forward"
+                },
+                "skip_qc": {
+                    "type": "boolean",
+                    "description": "Skip QC from original workflow.",
+                    "fa_icon": "fas fa-fast-forward"
                 }
             }
         },
@@ -237,6 +300,12 @@
         },
         {
             "$ref": "#/$defs/institutional_config_options"
+        },
+        {
+            "$ref": "#/$defs/alignment_options"
+        },
+        {
+            "$ref": "#/$defs/process_skipping_options"
         },
         {
             "$ref": "#/$defs/generic_options"
