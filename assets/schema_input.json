@@ -7,10 +7,10 @@
     "items": {
         "type": "object",
         "properties": {
-            "sample": {
+            "batch": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Sample name must be provided and cannot contain spaces",
+                "errorMessage": "Batch name must be provided and cannot contain spaces",
                 "meta": ["id"]
             },
             "fastq_1": {
@@ -26,8 +26,32 @@
                 "exists": true,
                 "pattern": "^\\S+\\.f(ast)?q\\.gz$",
                 "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+            },
+            "amp_batches": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+.xlsx$",
+                "errorMessage": "Amplification batches has to be in xlsx format",
+                "meta": ["amp_batches"]
+            },
+            "seq_batches": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+.xlsx$",
+                "errorMessage": "Sequencing batches has to be in xlsx format",
+                "meta": ["seq_batches"]
+            },
+            "well_cells": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+.xlsx$",
+                "errorMessage": "Well cells has to be in xlsx format",
+                "meta": ["well_cells"]
             }
         },
-        "required": ["sample", "fastq_1"]
+        "required": ["batch", "fastq_1", "fastq_2", "amp_batches", "seq_batches", "well_cells"]
     }
 }
