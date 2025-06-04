@@ -1,0 +1,255 @@
+{
+    "-profile test": {
+        "content": [
+            31,
+            {
+                "BOWTIE2_ALIGN": {
+                    "bowtie2": "2.5.2",
+                    "samtools": 1.18,
+                    "pigz": 2.6
+                },
+                "BOWTIE2_BUILD": {
+                    "bowtie2": "2.5.2"
+                },
+                "CAT_FASTA": {
+                    "pigz": "2.3.4"
+                },
+                "CAT_FASTQ": {
+                    "cat": 9.5
+                },
+                "CUT_SAM": {
+                    "cut": 8.3
+                },
+                "DEMULTIPLEX": {
+                    "demultiplex.pl": "v1.0"
+                },
+                "ERCC_CREATE": {
+                    "ERCC_CREATE": "v1.0"
+                },
+                "EXTRACT_LABELS": {
+                    "extract_labels.pl": "v1.0"
+                },
+                "FASTP_SPLIT": {
+                    "fastp": "0.23.3"
+                },
+                "FASTQC": {
+                    "fastqc": "0.12.1"
+                },
+                "MERGE_READS": {
+                    "pigz": "2.3.4"
+                },
+                "PREPARE": {
+                    "prepare_pipeline.py": "v1.0",
+                    "validate_data.py": "v1.0"
+                },
+                "QC_ALIGNED": {
+                    "qc_align.r": null
+                },
+                "QC_BATCH": {
+                    "qc_batch.r": null
+                },
+                "QC_REPORT": {
+                    "qc_report.r": null
+                },
+                "STARSOLO": {
+                    "star": "2.7.11b"
+                },
+                "STAR_GENOMEGENERATE": {
+                    "star": "2.7.11b",
+                    "samtools": 1.2,
+                    "gawk": "5.1.0"
+                },
+                "VELOCITY_CONVERT": {
+                    "velocity.py": "velocity 0.2"
+                },
+                "VELOCITY_TRIM": {
+                    "cutadapt": 4.6
+                },
+                "VELOCITY_WHITELIST": {
+                    "velocity.py": "velocity 0.2"
+                },
+                "Workflow": {
+                    "nf-core/marsseq": "v1.1.0"
+                }
+            },
+            [
+                "SB26_AB339",
+                "SB26_AB339/QC",
+                "SB26_AB339/QC/rd",
+                "SB26_AB339/QC/rd/AB339.rd",
+                "SB26_AB339/QC/report_per_amp_batch",
+                "SB26_AB339/QC/report_per_amp_batch/AB339.pdf",
+                "SB26_AB339/SB26_AB339.sam",
+                "SB26_AB339/data",
+                "SB26_AB339/data/amp_batches.txt",
+                "SB26_AB339/data/gene_intervals.txt",
+                "SB26_AB339/data/seq_batches.txt",
+                "SB26_AB339/data/wells_cells.txt",
+                "SB26_AB339/fastqc",
+                "SB26_AB339/fastqc/SB26_AB339.html",
+                "SB26_AB339/fastqc/SB26_AB339.zip",
+                "SB26_AB339/fastqc/versions.yml",
+                "SB26_AB339/output/QC",
+                "SB26_AB339/output/QC/noffsets_per_umi_distrib",
+                "SB26_AB339/output/QC/noffsets_per_umi_distrib/AB339.txt",
+                "SB26_AB339/output/QC/nreads_per_umi_distrib",
+                "SB26_AB339/output/QC/nreads_per_umi_distrib/AB339.txt",
+                "SB26_AB339/output/QC/read_stats",
+                "SB26_AB339/output/QC/read_stats/AB339.txt",
+                "SB26_AB339/output/QC/read_stats_amp_batch",
+                "SB26_AB339/output/QC/read_stats_amp_batch/AB339.txt",
+                "SB26_AB339/output/QC/umi_nuc_per_pos",
+                "SB26_AB339/output/QC/umi_nuc_per_pos/AB339.txt",
+                "SB26_AB339/output/QC/umi_stats",
+                "SB26_AB339/output/QC/umi_stats/AB339.txt",
+                "SB26_AB339/output/QC_reports",
+                "SB26_AB339/output/QC_reports/qc_SB26_AB339.pdf",
+                "SB26_AB339/output/_debug",
+                "SB26_AB339/output/_debug/AB339",
+                "SB26_AB339/output/_debug/AB339/UMIs.txt",
+                "SB26_AB339/output/_debug/AB339/offsets.txt",
+                "SB26_AB339/output/amp_batches_stats.txt",
+                "SB26_AB339/output/amp_batches_summary.txt",
+                "SB26_AB339/output/offset.tab",
+                "SB26_AB339/output/offset.tab/AB339.txt",
+                "SB26_AB339/output/singleton_offset.tab",
+                "SB26_AB339/output/singleton_offset.tab/AB339.txt",
+                "SB26_AB339/output/umi.tab",
+                "SB26_AB339/output/umi.tab/AB339.txt",
+                "SB26_AB339/velocity",
+                "SB26_AB339/velocity/SB26_AB339.Log.final.out",
+                "SB26_AB339/velocity/SB26_AB339.Log.out",
+                "SB26_AB339/velocity/SB26_AB339.Log.progress.out",
+                "SB26_AB339/velocity/SB26_AB339.Solo.out",
+                "SB26_AB339/velocity/SB26_AB339.Solo.out/Gene",
+                "SB26_AB339/velocity/SB26_AB339.Solo.out/Gene/Summary.csv",
+                "SB26_AB339/velocity/SB26_AB339.cutadapt.log",
+                "SB26_AB339/velocity/SB26_AB339_1.trim.fastq.gz",
+                "SB26_AB339/velocity/SB26_AB339_2.trim.fastq.gz",
+                "SB26_AB339/velocity/whitelist.txt",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_plots",
+                "multiqc/multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/nf_core_marsseq_software_mqc_versions.yml",
+                "references",
+                "references/GRCm38.p6.genome.chr19_ercc.fa",
+                "references/bowtie2",
+                "references/bowtie2/GRCm38.p6.genome.chr19_ercc.1.bt2",
+                "references/bowtie2/GRCm38.p6.genome.chr19_ercc.2.bt2",
+                "references/bowtie2/GRCm38.p6.genome.chr19_ercc.3.bt2",
+                "references/bowtie2/GRCm38.p6.genome.chr19_ercc.4.bt2",
+                "references/bowtie2/GRCm38.p6.genome.chr19_ercc.rev.1.bt2",
+                "references/bowtie2/GRCm38.p6.genome.chr19_ercc.rev.2.bt2",
+                "references/star",
+                "references/star/Genome",
+                "references/star/Log.out",
+                "references/star/SA",
+                "references/star/SAindex",
+                "references/star/chrLength.txt",
+                "references/star/chrName.txt",
+                "references/star/chrNameLength.txt",
+                "references/star/chrStart.txt",
+                "references/star/exonGeTrInfo.tab",
+                "references/star/exonInfo.tab",
+                "references/star/geneInfo.tab",
+                "references/star/genomeParameters.txt",
+                "references/star/sjdbInfo.txt",
+                "references/star/sjdbList.fromGTF.out.tab",
+                "references/star/sjdbList.out.tab",
+                "references/star/transcriptInfo.tab",
+                "references/versions.yml"
+            ],
+            [
+                "AB339.rd:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "AB339.pdf:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SB26_AB339.sam:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "amp_batches.txt:md5,464eec177ba56da2cd6ae816ab372bf6",
+                "gene_intervals.txt:md5,84ed98d1a42d8b8f4933c7507696e8f3",
+                "seq_batches.txt:md5,4e580320ffcb372cffb319812172e82f",
+                "wells_cells.txt:md5,dc90a216e364febc1a42e211396a0a1b",
+                "SB26_AB339.html:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SB26_AB339.zip:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "versions.yml:md5,f1131996e49d3648a407335f5e19b062",
+                "AB339.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "AB339.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "AB339.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "AB339.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "AB339.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "AB339.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "qc_SB26_AB339.pdf:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "UMIs.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "offsets.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "amp_batches_stats.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "amp_batches_summary.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "AB339.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "AB339.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "AB339.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SB26_AB339.Log.final.out:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SB26_AB339.Log.out:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SB26_AB339.Log.progress.out:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "Summary.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SB26_AB339.cutadapt.log:md5,d41d8cd98f00b204e9800998ecf8427e",
+                {
+                    "directory": false,
+                    "file": true,
+                    "freeSpace": 12735459414769664,
+                    "canonicalPath": "/maps/projects/dan1/data/Brickman/github/marsseq/.nf-test/tests/b34ec79388147aa624c5463d5ff31418/output/SB26_AB339/velocity/SB26_AB339_1.trim.fastq.gz",
+                    "usableSpace": 12581799523778560,
+                    "hidden": false,
+                    "totalSpace": 60035550031118336,
+                    "path": "/maps/projects/dan1/data/Brickman/github/marsseq/.nf-test/tests/b34ec79388147aa624c5463d5ff31418/output/SB26_AB339/velocity/SB26_AB339_1.trim.fastq.gz",
+                    "name": "SB26_AB339_1.trim.fastq.gz",
+                    "absolute": true,
+                    "absolutePath": "/maps/projects/dan1/data/Brickman/github/marsseq/.nf-test/tests/b34ec79388147aa624c5463d5ff31418/output/SB26_AB339/velocity/SB26_AB339_1.trim.fastq.gz",
+                    "parent": "/maps/projects/dan1/data/Brickman/github/marsseq/.nf-test/tests/b34ec79388147aa624c5463d5ff31418/output/SB26_AB339/velocity"
+                },
+                {
+                    "directory": false,
+                    "file": true,
+                    "freeSpace": 12735459414769664,
+                    "canonicalPath": "/maps/projects/dan1/data/Brickman/github/marsseq/.nf-test/tests/b34ec79388147aa624c5463d5ff31418/output/SB26_AB339/velocity/SB26_AB339_2.trim.fastq.gz",
+                    "usableSpace": 12581799523778560,
+                    "hidden": false,
+                    "totalSpace": 60035550031118336,
+                    "path": "/maps/projects/dan1/data/Brickman/github/marsseq/.nf-test/tests/b34ec79388147aa624c5463d5ff31418/output/SB26_AB339/velocity/SB26_AB339_2.trim.fastq.gz",
+                    "name": "SB26_AB339_2.trim.fastq.gz",
+                    "absolute": true,
+                    "absolutePath": "/maps/projects/dan1/data/Brickman/github/marsseq/.nf-test/tests/b34ec79388147aa624c5463d5ff31418/output/SB26_AB339/velocity/SB26_AB339_2.trim.fastq.gz",
+                    "parent": "/maps/projects/dan1/data/Brickman/github/marsseq/.nf-test/tests/b34ec79388147aa624c5463d5ff31418/output/SB26_AB339/velocity"
+                },
+                "whitelist.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "GRCm38.p6.genome.chr19_ercc.fa:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "GRCm38.p6.genome.chr19_ercc.1.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "GRCm38.p6.genome.chr19_ercc.2.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "GRCm38.p6.genome.chr19_ercc.3.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "GRCm38.p6.genome.chr19_ercc.4.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "GRCm38.p6.genome.chr19_ercc.rev.1.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "GRCm38.p6.genome.chr19_ercc.rev.2.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "Genome:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "Log.out:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SA:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SAindex:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "chrLength.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "chrName.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "chrNameLength.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "chrStart.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "exonGeTrInfo.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "exonInfo.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "geneInfo.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "genomeParameters.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "sjdbInfo.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "sjdbList.fromGTF.out.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "sjdbList.out.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "transcriptInfo.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "versions.yml:md5,eb84abaf35d7c23d56dd39764405ce17"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.3"
+        },
+        "timestamp": "2025-06-04T21:03:09.16123422"
+    }
+}

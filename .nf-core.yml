@@ -1,8 +1,7 @@
-bump_version: null
-lint: null
-nf_core_version: 3.0.2
-org_path: null
+nf_core_version: 3.3.1
 repository_type: pipeline
+skip_features:
+  - "nf-test"
 template:
   author: Martin Proks
   description: MARS-seq v2 preprocessing pipeline
@@ -11,6 +10,4 @@ template:
   name: marsseq
   org: nf-core
   outdir: .
-  skip_features: null
   version: 1.0.3
-update: null
